@@ -4,20 +4,10 @@ A Python package for creating composite images from videos. This tool extracts f
 
 ## Installation
 
-### Install from PyPI (when published)
-```bash
-pip install dynamo-figures
-```
-
 ### Install from Git
 ```bash
 # Install directly from GitHub
 pip install git+https://github.com/yourusername/dynamo_figures.git
-
-# Or clone and install in development mode
-git clone https://github.com/yourusername/dynamo_figures.git
-cd dynamo_figures
-pip install -e .
 ```
 
 ### Install from Local Directory
@@ -36,25 +26,25 @@ After installation, you can use the `composite-image` command:
 Uses pixels that are furthest from the mean of the image, creating dynamic composite effects.
 
 ```bash
-composite-image --video_path ./example_video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode VAR --alpha 0.4
+composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode VAR --alpha 0.4 --output ./example/composite.png
 ```
-![image-20230909002327059](./example_img/image-20230909002327059.png)
+![image-20230909002327059](./example/image-20230909002327059.png)
 
 #### 2. MIN Mode
 Keeps the darkest pixels from all frames.
 
 ```bash
-composite-image --video_path ./example_video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MIN
+composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MIN --output ./example/composite.png
 ```
-![image-20230909002235029](./example_img/image-20230909002235029.png)
+![image-20230909002235029](./example/image-20230909002235029.png)
 
 #### 3. MAX Mode
 Keeps the lightest pixels from all frames.
 
 ```bash
-composite-image --video_path ./example_video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MAX
+composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MAX --output ./example/composite.png
 ```
-![image-20230909002149494](./example_img/image-20230909002149494.png)
+![image-20230909002149494](./example/image-20230909002149494.png)
 
 ### Python API
 
@@ -67,7 +57,7 @@ import cv2
 # Create a composite image with VAR mode
 merger = CompositeImage(
     mode=CompositeMode.MAX_VARIATION,
-    video_path="./example_video.mp4",
+    video_path="./example/video.mp4",
     start_t=0.0,
     end_t=99.0,
     skip_frame=2,
