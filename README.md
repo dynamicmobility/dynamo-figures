@@ -61,7 +61,8 @@ merger = CompositeImage(
     start_t=0.0,
     end_t=99.0,
     skip_frame=2,
-    alpha=0.4
+    alpha=0.4,
+    disable_pbar=False  # Set to True to disable the progress bar
 )
 
 # Generate the composite
@@ -94,6 +95,7 @@ python src/dynamo_figures/composite_image.py --video_path ./example_video.mp4 --
   * `MAX`: Keeps the lightest pixels across all frames
   * `MIN`: Keeps the darkest pixels across all frames
 * `--alpha`: Alpha blending factor for intermediate frames, range 0.0-1.0 (default: 0.5)
+* `--disable_pbar`: Disable the progress bar when merging images (flag, no value needed)
 * `--output`: Custom output file path (default: saves as `<video_name>.jpg` in the same directory as the input video)
 
 ## Dependencies
@@ -101,6 +103,7 @@ python src/dynamo_figures/composite_image.py --video_path ./example_video.mp4 --
 - Python >= 3.8
 - opencv-python >= 4.0.0
 - numpy >= 1.20.0
+- tqdm >= 4.0.0
 
 ## License
 

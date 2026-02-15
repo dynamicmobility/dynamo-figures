@@ -11,6 +11,7 @@ import numpy as np
 from enum import Enum
 import argparse
 from pathlib import Path
+from tqdm import tqdm
 
 
 class CompositeMode(Enum):
@@ -23,7 +24,7 @@ class CompositeMode(Enum):
 class CompositeImage:
     """Class for creating composite images from video files."""
 
-    def __init__(self, mode, video_path, start_t=0, end_t=999, skip_frame=1, alpha=0.5):
+    def __init__(self, mode, video_path, start_t=0, end_t=999, skip_frame=1, alpha=0.5, disable_pbar=False):
         """
         Initialize CompositeImage.
         
@@ -34,12 +35,14 @@ class CompositeImage:
             end_t: End time in seconds (default: 999)
             skip_frame: Number of frames to skip (default: 1)
             alpha: Alpha blending factor for intermediate frames (default: 0.5)
+            disable_pbar: Disable progress bar (default: False)
         """
         self.video_path = video_path
         self.skip_frame = skip_frame
         self.start_t = start_t
         self.end_t = end_t
         self.mode = mode
+        self.disable_pbar = disable_pbar
         # clamp alpha
         self.alpha = max(0.0, min(1.0, alpha))
 
@@ -141,10 +144,7 @@ class CompositeImage:
         self.abs_diff_norm = np.zeros((height, width), dtype=np.float32)
         self.diff_img = np.zeros((height, width, 3), dtype=np.float32)
 
-        cnt = 0
-        for idx, image_file in enumerate(image_files):
-            cnt = cnt + 1
-            print("Processing ", cnt, " / ", img_num)
+        for idx, image_file in tqdm(enumerate(image_files), total=img_num, disable=self.disable_pbar, desc="Processing"):
             image = image_file.astype(np.float32)
             # Alpha blend (all modes) for intermediate frames only
             if idx != 0 and idx != (img_num - 1) and self.alpha < 1.0:
@@ -180,6 +180,8 @@ def main():
                         help='skip frame when extract frames.')
     parser.add_argument('--alpha', default=0.5, type=float, 
                         help='alpha for intermediate frames in all modes (0..1)')
+    parser.add_argument('--disable_pbar', action='store_true',
+                        help='disable progress bar when merging images')
     parser.add_argument('--output', type=str, default=None,
                         help='output file path (default: same directory as video with .jpg extension)')
 
@@ -211,7 +213,7 @@ def main():
         mode = CompositeMode.MAX_VARIATION
 
     # Create composite image
-    merger = CompositeImage(mode, path, start_t, end_t, skip_frame, alpha)
+    merger = CompositeImage(mode, path, start_t, end_t, skip_frame, alpha, args.disable_pbar)
     merged_image = merger.merge_images()
 
     # Determine output path
