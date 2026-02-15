@@ -7,7 +7,7 @@ A Python package for creating composite images from videos. This tool extracts f
 ### Install from Git
 ```bash
 # Install directly from GitHub
-pip install git+https://github.com/dynamicmobility/dynamo_figures.git
+pip install git+ssh://git@github.com/dynamicmobility/dynamo_figures.git
 ```
 
 ### Install from Local Directory
