@@ -106,9 +106,10 @@ class CompositeImage:
         while video.isOpened() and frame_count <= (end_frame - start_frame):
             ret, frame = video.read()
             if ret:
-                frame_count += 1
                 if (frame_count % self.skip_frame != 0):
+                    frame_count += 1
                     continue
+                else: frame_count += 1
                 imgs.append(frame)
 
                 if frame_count > (end_frame - start_frame):
