@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dynamo-figures"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Python package for dynamic figure generation"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -13,7 +13,9 @@ dependencies = [
     "numpy>=1.20.0",
     "tqdm>=4.0.0",
 ]
-
+authors = [
+  { name = "Dynamic Mobility Lab", email = "njanwani@gatech.edu" }
+]
 [project.scripts]
 composite-image = "dynamo_figures.composite_image:main"
 pic-from-video = "dynamo_figures.pic_from_video:main"
