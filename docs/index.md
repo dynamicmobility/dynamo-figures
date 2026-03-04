@@ -2,14 +2,14 @@
 layout: default
 title: Home
 nav_order: 1
-description: "Dynamo Figures - A Python package for creating composite images and extracting frames from videos."
+description: "Dynamo Figures - An internal Python package for creating figures for publications."
 permalink: /
 ---
 
 # Dynamo Figures
 {: .fs-9 }
 
-A Python package for creating composite images from videos and extracting individual frames.
+An internal Python package for creating figures for publications.
 {: .fs-6 .fw-300 }
 
 [Get Started](#installation){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
@@ -19,10 +19,13 @@ A Python package for creating composite images from videos and extracting indivi
 
 ## Overview
 
-Dynamo Figures provides powerful tools for video processing:
+Dynamo Figures provides helpful, easy-to-run tools for video processing:
 
-- **Composite Image**: Create stunning visual effects by merging video frames using various composition modes
+- **Composite Image**: Create cool visual effects by merging video frames using various composition modes
 - **Frame Extraction**: Extract single frames from videos at specific times or frame numbers
+
+### Conributing
+Please feel free to contribute. Highly recommend Claude! Chat with Neil if you have questions.
 
 ## Installation
 
@@ -71,4 +74,5 @@ All Rights Reserved 2023
 
 ## Credits
 
-Original Author: renyunfan (renyf@connect.hku.hk)
+Composite Video Generation: renyunfan (renyf@connect.hku.hk)
+Claude!
