@@ -16,6 +16,7 @@ dependencies = [
 
 [project.scripts]
 composite-image = "dynamo_figures.composite_image:main"
+pic-from-video = "dynamo_figures.pic_from_video:main"
 
 [project.optional-dependencies]
 dev = [

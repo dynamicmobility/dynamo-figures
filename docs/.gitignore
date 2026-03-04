@@ -1,0 +1,25 @@
+# Jekyll build output
+_site/
+
+# Bundler cache
+.bundle/
+vendor/
+
+# Jekyll cache
+.jekyll-cache/
+.jekyll-metadata
+
+# Sass cache
+.sass-cache/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Gemfile.lock (for cross-platform compatibility)
+Gemfile.lock
