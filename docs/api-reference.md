@@ -1,7 +1,7 @@
 ---
 layout: default
 title: API Reference
-nav_order: 4
+nav_order: 5
 description: "Complete API reference for Dynamo Figures Python package."
 ---
 
@@ -10,6 +10,15 @@ description: "Complete API reference for Dynamo Figures Python package."
 
 Complete reference for the Dynamo Figures Python API.
 {: .fs-6 .fw-300 }
+
+---
+
+## Table of Contents
+
+- [CompositeMode](#class-compositemode)
+- [CompositeImage](#class-compositeimage)
+- [FrameExtractor](#class-frameextractor)
+- [VideoToGif](#class-videotogif)
 
 ---
 
@@ -232,4 +241,132 @@ for video in video_files:
     output = f"frames/{video.stem}_frame.jpg"
     extractor.extract_frame(output)
     print(f"Extracted: {output}")
+```
+
+---
+
+## Module: `dynamo_figures.video_to_gif`
+
+### Class: `VideoToGif`
+
+Class for converting video files to animated GIFs.
+
+#### Constructor
+
+```python
+VideoToGif(
+    video_path: str,
+    fps: int = 10,
+    start_t: float = 0,
+    end_t: float = None,
+    scale: float = 1.0,
+    width: int = None,
+    loop: int = 0,
+    optimize: bool = True,
+    reverse: bool = False,
+    disable_pbar: bool = False
+)
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|:----------|:-----|:--------|:------------|
+| `video_path` | `str` | Required | Path to input video |
+| `fps` | `int` | `10` | Output GIF frame rate |
+| `start_t` | `float` | `0` | Start time in seconds |
+| `end_t` | `float` | `None` | End time in seconds (None = end of video) |
+| `scale` | `float` | `1.0` | Scale factor for output (0.01-2.0) |
+| `width` | `int` | `None` | Target width in pixels (overrides scale) |
+| `loop` | `int` | `0` | Number of loops (0 = infinite) |
+| `optimize` | `bool` | `True` | Optimize GIF for smaller size |
+| `reverse` | `bool` | `False` | Add reverse frames (boomerang) |
+| `disable_pbar` | `bool` | `False` | Disable progress bar |
+
+#### Properties
+
+| Property | Type | Description |
+|:---------|:-----|:------------|
+| `video_path` | `str` | Path to the video file |
+| `fps` | `int` | Output frame rate |
+| `start_t` | `float` | Start time in seconds |
+| `end_t` | `float` | End time in seconds |
+| `scale` | `float` | Scale factor |
+| `width` | `int` | Target width |
+| `video_fps` | `float` | Source video FPS (after loading) |
+| `video_duration` | `float` | Source video duration (after loading) |
+
+#### Methods
+
+##### `get_video_info()`
+
+Get video information without extracting frames.
+
+```python
+info = converter.get_video_info()
+```
+
+**Returns:** `dict` or `None` - Video information dictionary
+
+---
+
+##### `extract_frames()`
+
+Extract frames from the video file.
+
+```python
+frames = converter.extract_frames()
+```
+
+**Returns:** `list[numpy.ndarray]` or `None` - List of frames as RGB numpy arrays
+
+---
+
+##### `convert(output_path)`
+
+Convert video to GIF and save to file.
+
+```python
+success = converter.convert("output.gif")
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+| `output_path` | `str` | Path to save the GIF |
+
+**Returns:** `bool` - `True` if successful, `False` otherwise
+
+---
+
+### Convert Video to GIF
+
+```python
+from dynamo_figures.video_to_gif import VideoToGif
+
+converter = VideoToGif(
+    video_path="input.mp4",
+    fps=15,
+    start_t=2.0,
+    end_t=5.0,
+    scale=0.5,
+    reverse=True
+)
+
+converter.convert("output.gif")
+```
+
+### Create Boomerang GIF
+
+```python
+from dynamo_figures.video_to_gif import VideoToGif
+
+converter = VideoToGif(
+    video_path="input.mp4",
+    fps=12,
+    reverse=True
+)
+
+converter.convert("boomerang.gif")
 ```

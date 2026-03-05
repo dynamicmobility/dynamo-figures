@@ -13,6 +13,12 @@ Extract single frames from video files and save them as images.
 
 ---
 
+![Frame Extraction Example](assets/frame_extraction_example.jpg)
+*Example frame extracted from a video file using pic-from-video*
+{: .text-center }
+
+---
+
 ## Overview
 
 The `pic-from-video` tool extracts a single frame from a video file and saves it as an image. You can specify the exact frame number, a time in seconds, or let it default to the middle frame.

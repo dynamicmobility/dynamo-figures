@@ -13,6 +13,12 @@ Create stunning composite images by merging video frames using various compositi
 
 ---
 
+![Composite Image Example](assets/composite.png)
+*Example composite image created using VAR mode - showing motion trails from video frames*
+{: .text-center }
+
+---
+
 ## Overview
 
 The `composite-image` tool extracts frames from a video and merges them using different composition modes to create dynamic visual effects. This is useful for creating motion trails, long-exposure effects, and artistic visualizations.

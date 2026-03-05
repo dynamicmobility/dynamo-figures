@@ -23,6 +23,7 @@ Dynamo Figures provides helpful, easy-to-run tools for video processing:
 
 - **Composite Image**: Create cool visual effects by merging video frames using various composition modes
 - **Frame Extraction**: Extract single frames from videos at specific times or frame numbers
+- **Video to GIF**: Convert videos to animated GIFs with frame rate and size control
 
 ### Conributing
 Please feel free to contribute. Highly recommend Claude! Chat with Neil if you have questions.
@@ -57,6 +58,12 @@ composite-image --video_path ./video.mp4 --mode VAR --alpha 0.4 --output composi
 pic-from-video --video_path ./video.mp4 --time 5.0 --output frame.jpg
 ```
 
+### Convert Video to GIF
+
+```bash
+video-to-gif --video_path ./video.mp4 --fps 15 --start_t 2.0 --end_t 5.0 --output animation.gif
+```
+
 ## Dependencies
 
 | Package | Version |
@@ -65,6 +72,7 @@ pic-from-video --video_path ./video.mp4 --time 5.0 --output frame.jpg
 | opencv-python | >= 4.0.0 |
 | numpy | >= 1.20.0 |
 | tqdm | >= 4.0.0 |
+| Pillow | >= 8.0.0 |
 
 ---
 
