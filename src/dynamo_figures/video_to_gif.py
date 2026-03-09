@@ -233,7 +233,10 @@ class VideoToGif:
         pil_frames = [Image.fromarray(frame) for frame in frames]
         
         # Calculate frame duration in milliseconds
-        duration = int(1000 / (self.fps * self.speed))
+        # Frame skip determines spacing in original video
+        frame_skip = max(1, int(self.video_fps / self.fps)) if self.video_fps > 0 else 1
+        # Duration accounts for frame skip and applies speed modifier
+        duration = int(1000 * frame_skip / self.video_fps / self.speed)
         
         # Save GIF
         pil_frames[0].save(
@@ -252,7 +255,10 @@ class VideoToGif:
             return False
         
         # Calculate frame duration
-        duration = 1.0 / (self.fps * self.speed)
+        # Frame skip determines spacing in original video
+        frame_skip = max(1, int(self.video_fps / self.fps)) if self.video_fps > 0 else 1
+        # Duration accounts for frame skip and applies speed modifier
+        duration = frame_skip / self.video_fps / self.speed if self.video_fps > 0 else 1.0
         
         # Use v3 API if available, fallback to v2
         try:
