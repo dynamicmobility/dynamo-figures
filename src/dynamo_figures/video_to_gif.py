@@ -29,7 +29,8 @@ class VideoToGif:
     """Class for converting video files to animated GIFs."""
 
     def __init__(self, video_path, fps=10, start_t=0, end_t=None, scale=1.0,
-                 width=None, loop=0, optimize=True, reverse=False, disable_pbar=False):
+                 width=None, crop_width=None, crop_height=None, speed=1.0,
+                 loop=0, optimize=True, reverse=False, disable_pbar=False):
         """
         Initialize VideoToGif converter.
         
@@ -40,6 +41,9 @@ class VideoToGif:
             end_t: End time in seconds (default: None, meaning end of video)
             scale: Scale factor for output size (default: 1.0)
             width: Target width in pixels, maintains aspect ratio (default: None)
+            crop_width: Crop output to this width in pixels via center crop (default: None)
+            crop_height: Crop output to this height in pixels via center crop (default: None)
+            speed: Playback speed multiplier, e.g. 2.0 for 2x faster (default: 1.0)
             loop: Number of loops, 0 for infinite (default: 0)
             optimize: Whether to optimize the GIF for smaller file size (default: True)
             reverse: Add reverse frames for boomerang effect (default: False)
@@ -51,6 +55,9 @@ class VideoToGif:
         self.end_t = end_t
         self.scale = max(0.01, min(2.0, scale))
         self.width = width
+        self.crop_width = crop_width
+        self.crop_height = crop_height
+        self.speed = max(0.01, speed)
         self.loop = loop
         self.optimize = optimize
         self.reverse = reverse
@@ -116,6 +123,15 @@ class VideoToGif:
         
         return out_width, out_height
 
+    def _crop_frame(self, frame, target_width, target_height):
+        """Center-crop a frame to the target dimensions."""
+        h, w = frame.shape[:2]
+        crop_w = min(target_width, w)
+        crop_h = min(target_height, h)
+        x_start = (w - crop_w) // 2
+        y_start = (h - crop_h) // 2
+        return frame[y_start:y_start + crop_h, x_start:x_start + crop_w]
+
     def extract_frames(self):
         """
         Extract frames from the video file.
@@ -154,8 +170,16 @@ class VideoToGif:
         # Calculate output size
         out_width, out_height = self._calculate_output_size()
         
+        # Determine crop dimensions
+        crop_w = self.crop_width if self.crop_width is not None else None
+        crop_h = self.crop_height if self.crop_height is not None else None
+
         print(f" -- Extracting frames {start_frame} to {end_frame} (every {frame_skip} frames)")
-        print(f" -- Output size: {out_width}x{out_height}")
+        print(f" -- Resize to: {out_width}x{out_height}")
+        if crop_w is not None or crop_h is not None:
+            final_w = crop_w if crop_w is not None else out_width
+            final_h = crop_h if crop_h is not None else out_height
+            print(f" -- Crop to: {final_w}x{final_h}")
 
         # Set video position to start frame
         cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
@@ -178,6 +202,13 @@ class VideoToGif:
                 
                 # Convert BGR to RGB for PIL/imageio
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                # Apply center crop if requested
+                if crop_w is not None or crop_h is not None:
+                    cw = crop_w if crop_w is not None else frame_rgb.shape[1]
+                    ch = crop_h if crop_h is not None else frame_rgb.shape[0]
+                    frame_rgb = self._crop_frame(frame_rgb, cw, ch)
+
                 frames.append(frame_rgb)
                 pbar.update(1)
             
@@ -202,7 +233,7 @@ class VideoToGif:
         pil_frames = [Image.fromarray(frame) for frame in frames]
         
         # Calculate frame duration in milliseconds
-        duration = int(1000 / self.fps)
+        duration = int(1000 / (self.fps * self.speed))
         
         # Save GIF
         pil_frames[0].save(
@@ -221,7 +252,7 @@ class VideoToGif:
             return False
         
         # Calculate frame duration
-        duration = 1.0 / self.fps
+        duration = 1.0 / (self.fps * self.speed)
         
         # Use v3 API if available, fallback to v2
         try:
@@ -312,6 +343,12 @@ def main():
                         help='scale factor for output size (default: 1.0)')
     parser.add_argument('--width', type=int, default=None,
                         help='target width in pixels, maintains aspect ratio (overrides --scale)')
+    parser.add_argument('--crop_width', type=int, default=None,
+                        help='crop output to this width in pixels (center crop)')
+    parser.add_argument('--crop_height', type=int, default=None,
+                        help='crop output to this height in pixels (center crop)')
+    parser.add_argument('--speed', type=float, default=1.0,
+                        help='playback speed multiplier, e.g. 2.0 for 2x faster (default: 1.0)')
     parser.add_argument('--loop', type=int, default=0,
                         help='number of loops, 0 for infinite (default: 0)')
     parser.add_argument('--no_optimize', action='store_true',
@@ -334,6 +371,9 @@ def main():
     print(" -- Load Param: end_t", args.end_t)
     print(" -- Load Param: scale", args.scale)
     print(" -- Load Param: width", args.width)
+    print(" -- Load Param: crop_width", args.crop_width)
+    print(" -- Load Param: crop_height", args.crop_height)
+    print(" -- Load Param: speed", args.speed)
     print(" -- Load Param: loop", args.loop)
     print(" -- Load Param: optimize", not args.no_optimize)
     print(" -- Load Param: reverse", args.reverse)
@@ -346,6 +386,9 @@ def main():
         end_t=args.end_t,
         scale=args.scale,
         width=args.width,
+        crop_width=args.crop_width,
+        crop_height=args.crop_height,
+        speed=args.speed,
         loop=args.loop,
         optimize=not args.no_optimize,
         reverse=args.reverse,

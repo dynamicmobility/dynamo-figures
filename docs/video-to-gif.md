@@ -23,6 +23,9 @@ Convert video files to animated GIFs with full control over timing, frame rate, 
 
 The `video-to-gif` tool converts video files to animated GIFs. It supports time range selection, frame rate control, resizing, and optional effects like boomerang (reverse) looping.
 
+[Command-Line Usage](#command-line-usage){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[Python API](#python-api){: .btn .fs-5 .mb-4 .mb-md-0 }
+
 ## Command-Line Usage
 
 ```bash
@@ -45,6 +48,9 @@ video-to-gif --video_path <path> [options]
 | `--end_t` | End of video | End time in seconds |
 | `--scale` | `1.0` | Scale factor for output size (0.01-2.0) |
 | `--width` | None | Target width in pixels (maintains aspect ratio, overrides `--scale`) |
+| `--crop_width` | None | Crop output to this width in pixels (center crop) |
+| `--crop_height` | None | Crop output to this height in pixels (center crop) |
+| `--speed` | `1.0` | Playback speed multiplier (e.g. `2.0` = 2x faster, `0.5` = half speed) |
 | `--loop` | `0` | Number of loops (0 = infinite) |
 | `--no_optimize` | `false` | Disable GIF optimization |
 | `--reverse` | `false` | Add reverse frames for boomerang effect |
@@ -54,6 +60,18 @@ video-to-gif --video_path <path> [options]
 ---
 
 ## Usage Examples
+
+### Full Example
+
+Create a high-quality, cropped, sped-up GIF from a specific time range:
+
+```bash
+video-to-gif --video_path ./example/video.mp4 \
+    --start_t 1.5 --end_t 4.0 \
+    --fps 15 --width 480 \
+    --crop_height 300 --speed 1.5 \
+    --reverse --output ./example.gif
+```
 
 ### Basic Conversion
 
@@ -99,23 +117,40 @@ Set a specific width (height auto-calculated):
 video-to-gif --video_path input.mp4 --width 320
 ```
 
+### Crop Output
+
+Crop the output to specific dimensions via center crop:
+
+```bash
+video-to-gif --video_path input.mp4 --crop_width 640 --crop_height 360
+```
+
+Crop only one dimension (e.g. trim height while keeping full width):
+
+```bash
+video-to-gif --video_path input.mp4 --width 800 --crop_height 400
+```
+
+### Change Playback Speed
+
+Speed up the GIF to 2x:
+
+```bash
+video-to-gif --video_path input.mp4 --speed 2.0
+```
+
+Slow down to half speed:
+
+```bash
+video-to-gif --video_path input.mp4 --speed 0.5
+```
+
 ### Boomerang Effect
 
 Create a GIF that plays forward then backward:
 
 ```bash
 video-to-gif --video_path input.mp4 --reverse
-```
-
-### Full Example
-
-Create a high-quality GIF from a specific time range:
-
-```bash
-video-to-gif --video_path ./example/video.mp4 \
-    --start_t 1.5 --end_t 4.0 \
-    --fps 15 --width 480 \
-    --reverse --output ./example.gif
 ```
 
 ### Get Video Information Only
@@ -134,6 +169,9 @@ video-to-gif --video_path input.mp4 --info_only
  -- Load Param: end_t None
  -- Load Param: scale 1.0
  -- Load Param: width None
+ -- Load Param: crop_width None
+ -- Load Param: crop_height None
+ -- Load Param: speed 1.0
  -- Load Param: loop 0
  -- Load Param: optimize True
  -- Load Param: reverse False
@@ -180,6 +218,9 @@ VideoToGif(
     end_t=None,           # End time in seconds (None = end of video)
     scale=1.0,            # Scale factor for output size
     width=None,           # Target width (overrides scale)
+    crop_width=None,      # Crop to this width (center crop)
+    crop_height=None,     # Crop to this height (center crop)
+    speed=1.0,            # Playback speed multiplier
     loop=0,               # Number of loops (0 = infinite)
     optimize=True,        # Optimize GIF for smaller size
     reverse=False,        # Add reverse frames (boomerang)
