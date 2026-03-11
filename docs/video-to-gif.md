@@ -48,8 +48,10 @@ video-to-gif --video_path <path> [options]
 | `--end_t` | End of video | End time in seconds |
 | `--scale` | `1.0` | Scale factor for output size (0.01-2.0) |
 | `--width` | None | Target width in pixels (maintains aspect ratio, overrides `--scale`) |
-| `--crop_width` | None | Crop output to this width in pixels (center crop) |
-| `--crop_height` | None | Crop output to this height in pixels (center crop) |
+| `--crop_left` | `0` | Pixels to crop from the left edge (after scaling) |
+| `--crop_right` | `0` | Pixels to crop from the right edge (after scaling) |
+| `--crop_top` | `0` | Pixels to crop from the top edge (after scaling) |
+| `--crop_bottom` | `0` | Pixels to crop from the bottom edge (after scaling) |
 | `--speed` | `1.0` | Playback speed multiplier (e.g. `2.0` = 2x faster, `0.5` = half speed) |
 | `--loop` | `0` | Number of loops (0 = infinite) |
 | `--no_optimize` | `false` | Disable GIF optimization |
@@ -69,7 +71,7 @@ Create a high-quality, cropped, sped-up GIF from a specific time range:
 video-to-gif --video_path ./example/video.mp4 \
     --start_t 1.5 --end_t 4.0 \
     --fps 15 --width 480 \
-    --crop_height 300 --speed 1.5 \
+    --crop_top 50 --crop_bottom 50 --speed 1.5 \
     --reverse --output ./example.gif
 ```
 
@@ -119,16 +121,22 @@ video-to-gif --video_path input.mp4 --width 320
 
 ### Crop Output
 
-Crop the output to specific dimensions via center crop:
+Crop pixels from specific edges (applied after scaling):
 
 ```bash
-video-to-gif --video_path input.mp4 --crop_width 640 --crop_height 360
+video-to-gif --video_path input.mp4 --crop_left 100 --crop_right 100
 ```
 
-Crop only one dimension (e.g. trim height while keeping full width):
+Crop from all edges:
 
 ```bash
-video-to-gif --video_path input.mp4 --width 800 --crop_height 400
+video-to-gif --video_path input.mp4 --crop_top 50 --crop_bottom 50 --crop_left 100 --crop_right 100
+```
+
+Combine with scaling (crop is applied after scale):
+
+```bash
+video-to-gif --video_path input.mp4 --width 800 --crop_top 50 --crop_bottom 50
 ```
 
 ### Change Playback Speed
@@ -169,8 +177,10 @@ video-to-gif --video_path input.mp4 --info_only
  -- Load Param: end_t None
  -- Load Param: scale 1.0
  -- Load Param: width None
- -- Load Param: crop_width None
- -- Load Param: crop_height None
+ -- Load Param: crop_left 0
+ -- Load Param: crop_right 0
+ -- Load Param: crop_top 0
+ -- Load Param: crop_bottom 0
  -- Load Param: speed 1.0
  -- Load Param: loop 0
  -- Load Param: optimize True
@@ -218,8 +228,10 @@ VideoToGif(
     end_t=None,           # End time in seconds (None = end of video)
     scale=1.0,            # Scale factor for output size
     width=None,           # Target width (overrides scale)
-    crop_width=None,      # Crop to this width (center crop)
-    crop_height=None,     # Crop to this height (center crop)
+    crop_left=0,          # Pixels to crop from left edge (after scaling)
+    crop_right=0,         # Pixels to crop from right edge (after scaling)
+    crop_top=0,           # Pixels to crop from top edge (after scaling)
+    crop_bottom=0,        # Pixels to crop from bottom edge (after scaling)
     speed=1.0,            # Playback speed multiplier
     loop=0,               # Number of loops (0 = infinite)
     optimize=True,        # Optimize GIF for smaller size

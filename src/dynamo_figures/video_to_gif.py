@@ -29,7 +29,7 @@ class VideoToGif:
     """Class for converting video files to animated GIFs."""
 
     def __init__(self, video_path, fps=10, start_t=0, end_t=None, scale=1.0,
-                 width=None, crop_width=None, crop_height=None, speed=1.0,
+                 width=None, crop_left=0, crop_right=0, crop_top=0, crop_bottom=0, speed=1.0,
                  loop=0, optimize=True, reverse=False, disable_pbar=False):
         """
         Initialize VideoToGif converter.
@@ -41,8 +41,10 @@ class VideoToGif:
             end_t: End time in seconds (default: None, meaning end of video)
             scale: Scale factor for output size (default: 1.0)
             width: Target width in pixels, maintains aspect ratio (default: None)
-            crop_width: Crop output to this width in pixels via center crop (default: None)
-            crop_height: Crop output to this height in pixels via center crop (default: None)
+            crop_left: Pixels to crop from the left edge after scaling (default: 0)
+            crop_right: Pixels to crop from the right edge after scaling (default: 0)
+            crop_top: Pixels to crop from the top edge after scaling (default: 0)
+            crop_bottom: Pixels to crop from the bottom edge after scaling (default: 0)
             speed: Playback speed multiplier, e.g. 2.0 for 2x faster (default: 1.0)
             loop: Number of loops, 0 for infinite (default: 0)
             optimize: Whether to optimize the GIF for smaller file size (default: True)
@@ -55,8 +57,10 @@ class VideoToGif:
         self.end_t = end_t
         self.scale = max(0.01, min(2.0, scale))
         self.width = width
-        self.crop_width = crop_width
-        self.crop_height = crop_height
+        self.crop_left = max(0, crop_left)
+        self.crop_right = max(0, crop_right)
+        self.crop_top = max(0, crop_top)
+        self.crop_bottom = max(0, crop_bottom)
         self.speed = max(0.01, speed)
         self.loop = loop
         self.optimize = optimize
@@ -123,14 +127,21 @@ class VideoToGif:
         
         return out_width, out_height
 
-    def _crop_frame(self, frame, target_width, target_height):
-        """Center-crop a frame to the target dimensions."""
+    def _crop_frame(self, frame, crop_left, crop_right, crop_top, crop_bottom):
+        """Crop a frame by removing pixels from edges."""
         h, w = frame.shape[:2]
-        crop_w = min(target_width, w)
-        crop_h = min(target_height, h)
-        x_start = (w - crop_w) // 2
-        y_start = (h - crop_h) // 2
-        return frame[y_start:y_start + crop_h, x_start:x_start + crop_w]
+        x_start = crop_left
+        x_end = w - crop_right
+        y_start = crop_top
+        y_end = h - crop_bottom
+        
+        # Ensure valid crop region
+        x_start = max(0, min(x_start, w - 1))
+        x_end = max(x_start + 1, min(x_end, w))
+        y_start = max(0, min(y_start, h - 1))
+        y_end = max(y_start + 1, min(y_end, h))
+        
+        return frame[y_start:y_end, x_start:x_end]
 
     def extract_frames(self):
         """
@@ -170,16 +181,17 @@ class VideoToGif:
         # Calculate output size
         out_width, out_height = self._calculate_output_size()
         
-        # Determine crop dimensions
-        crop_w = self.crop_width if self.crop_width is not None else None
-        crop_h = self.crop_height if self.crop_height is not None else None
+        # Check if cropping is requested
+        has_crop = (self.crop_left > 0 or self.crop_right > 0 or 
+                    self.crop_top > 0 or self.crop_bottom > 0)
 
         print(f" -- Extracting frames {start_frame} to {end_frame} (every {frame_skip} frames)")
         print(f" -- Resize to: {out_width}x{out_height}")
-        if crop_w is not None or crop_h is not None:
-            final_w = crop_w if crop_w is not None else out_width
-            final_h = crop_h if crop_h is not None else out_height
-            print(f" -- Crop to: {final_w}x{final_h}")
+        if has_crop:
+            final_w = out_width - self.crop_left - self.crop_right
+            final_h = out_height - self.crop_top - self.crop_bottom
+            print(f" -- Crop: left={self.crop_left}, right={self.crop_right}, top={self.crop_top}, bottom={self.crop_bottom}")
+            print(f" -- Final size: {final_w}x{final_h}")
 
         # Set video position to start frame
         cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
@@ -203,11 +215,10 @@ class VideoToGif:
                 # Convert BGR to RGB for PIL/imageio
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                # Apply center crop if requested
-                if crop_w is not None or crop_h is not None:
-                    cw = crop_w if crop_w is not None else frame_rgb.shape[1]
-                    ch = crop_h if crop_h is not None else frame_rgb.shape[0]
-                    frame_rgb = self._crop_frame(frame_rgb, cw, ch)
+                # Apply crop if requested (after scaling)
+                if has_crop:
+                    frame_rgb = self._crop_frame(frame_rgb, self.crop_left, self.crop_right, 
+                                                  self.crop_top, self.crop_bottom)
 
                 frames.append(frame_rgb)
                 pbar.update(1)
@@ -349,10 +360,14 @@ def main():
                         help='scale factor for output size (default: 1.0)')
     parser.add_argument('--width', type=int, default=None,
                         help='target width in pixels, maintains aspect ratio (overrides --scale)')
-    parser.add_argument('--crop_width', type=int, default=None,
-                        help='crop output to this width in pixels (center crop)')
-    parser.add_argument('--crop_height', type=int, default=None,
-                        help='crop output to this height in pixels (center crop)')
+    parser.add_argument('--crop_left', type=int, default=0,
+                        help='pixels to crop from the left edge after scaling (default: 0)')
+    parser.add_argument('--crop_right', type=int, default=0,
+                        help='pixels to crop from the right edge after scaling (default: 0)')
+    parser.add_argument('--crop_top', type=int, default=0,
+                        help='pixels to crop from the top edge after scaling (default: 0)')
+    parser.add_argument('--crop_bottom', type=int, default=0,
+                        help='pixels to crop from the bottom edge after scaling (default: 0)')
     parser.add_argument('--speed', type=float, default=1.0,
                         help='playback speed multiplier, e.g. 2.0 for 2x faster (default: 1.0)')
     parser.add_argument('--loop', type=int, default=0,
@@ -377,8 +392,10 @@ def main():
     print(" -- Load Param: end_t", args.end_t)
     print(" -- Load Param: scale", args.scale)
     print(" -- Load Param: width", args.width)
-    print(" -- Load Param: crop_width", args.crop_width)
-    print(" -- Load Param: crop_height", args.crop_height)
+    print(" -- Load Param: crop_left", args.crop_left)
+    print(" -- Load Param: crop_right", args.crop_right)
+    print(" -- Load Param: crop_top", args.crop_top)
+    print(" -- Load Param: crop_bottom", args.crop_bottom)
     print(" -- Load Param: speed", args.speed)
     print(" -- Load Param: loop", args.loop)
     print(" -- Load Param: optimize", not args.no_optimize)
@@ -392,8 +409,10 @@ def main():
         end_t=args.end_t,
         scale=args.scale,
         width=args.width,
-        crop_width=args.crop_width,
-        crop_height=args.crop_height,
+        crop_left=args.crop_left,
+        crop_right=args.crop_right,
+        crop_top=args.crop_top,
+        crop_bottom=args.crop_bottom,
         speed=args.speed,
         loop=args.loop,
         optimize=not args.no_optimize,
