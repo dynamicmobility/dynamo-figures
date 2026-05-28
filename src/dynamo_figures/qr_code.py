@@ -38,7 +38,7 @@ ERROR_CORRECTION = {
 }
 
 
-def load_logo(logo_path, size):
+def load_logo(logo_path, size, color=None):
     """
     Load a logo and return it as a square RGBA Pillow image of (size, size).
 
@@ -46,6 +46,9 @@ def load_logo(logo_path, size):
     required when an SVG logo is actually used). Raster logos (PNG/JPG/...) are
     opened directly. The logo is scaled to fit inside a (size, size) box while
     preserving aspect ratio, then centered on a transparent canvas.
+
+    If `color` is given (any Pillow color string, e.g. '#eaaa00'), the logo is
+    recolored to that solid color while keeping its original shape (alpha).
     """
     logo_path = Path(logo_path)
 
@@ -73,6 +76,14 @@ def load_logo(logo_path, size):
     canvas = Image.new('RGBA', (size, size), (0, 0, 0, 0))
     offset = ((size - logo.width) // 2, (size - logo.height) // 2)
     canvas.paste(logo, offset, logo)
+
+    # Recolor: keep the alpha (shape), replace RGB with the requested color.
+    if color is not None:
+        alpha = canvas.split()[-1]
+        tinted = Image.new('RGBA', canvas.size, color)
+        tinted.putalpha(alpha)
+        canvas = tinted
+
     return canvas
 
 
@@ -82,7 +93,8 @@ class QRCode:
     def __init__(self, data, box_size=10, border=4, error_correction='H',
                  fill_color='black', back_color='white',
                  logo_path=None, logo_ratio=0.22, logo_padding=0.0,
-                 logo_bg='white', logo_style='badge', logo_halo=0.04):
+                 logo_bg='white', logo_style='badge', logo_halo=0.04,
+                 logo_color=None):
         """
         Initialize QRCode.
 
@@ -114,6 +126,9 @@ class QRCode:
             logo_halo: For 'integrate' style, width of the cleared halo around
                 the logo strokes, as a fraction of the logo size (default:
                 0.04). Larger = more contrast but more modules removed.
+            logo_color: Optional Pillow color string (e.g. '#eaaa00') to recolor
+                the logo to a solid color, keeping its shape (default: None,
+                i.e. the logo's original colors).
         """
         self.data = data
         self.box_size = box_size
@@ -127,6 +142,7 @@ class QRCode:
         self.logo_bg = logo_bg
         self.logo_style = logo_style
         self.logo_halo = logo_halo
+        self.logo_color = logo_color
 
         if self.logo_style not in ('badge', 'integrate'):
             raise ValueError(
@@ -193,7 +209,7 @@ class QRCode:
         """
         qr_w, qr_h = qr_img.size
         logo_size = int(qr_w * self.logo_ratio)
-        logo = load_logo(self.logo_path, logo_size)
+        logo = load_logo(self.logo_path, logo_size, color=self.logo_color)
 
         # Place the logo on a full-size transparent layer so coordinates align
         # with the QR image.
@@ -218,7 +234,7 @@ class QRCode:
         """Paste the logo (with optional badge) centered onto the QR image."""
         qr_w, qr_h = qr_img.size
         logo_size = int(qr_w * self.logo_ratio)
-        logo = load_logo(self.logo_path, logo_size)
+        logo = load_logo(self.logo_path, logo_size, color=self.logo_color)
 
         # Draw a solid badge behind the logo so a dark logo stays distinct from
         # dark QR modules. The badge is a rounded square slightly larger than
@@ -291,6 +307,9 @@ def main():
     parser.add_argument('--logo_halo', type=float, default=0.04,
                         help="for 'integrate', cleared halo width around strokes "
                              "as a fraction of logo size (default: 0.04).")
+    parser.add_argument('--logo_color', type=str, default=None,
+                        help="recolor the logo to a solid color, e.g. '#eaaa00' "
+                             "(default: keep original colors).")
 
     args = parser.parse_args()
 
@@ -318,6 +337,7 @@ def main():
         logo_bg=logo_bg,
         logo_style=args.logo_style,
         logo_halo=args.logo_halo,
+        logo_color=args.logo_color,
     )
 
     output_path = Path(args.output)
