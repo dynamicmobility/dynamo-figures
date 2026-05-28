@@ -24,6 +24,7 @@ Dynamo Figures provides helpful, easy-to-run tools for video processing:
 - **Composite Image**: Create cool visual effects by merging video frames using various composition modes
 - **Frame Extraction**: Extract single frames from videos at specific times or frame numbers
 - **Video to GIF**: Convert videos to animated GIFs with frame rate and size control
+- **QR Code**: Generate permanent QR codes from links, with optional logo embedding and recoloring
 
 ### Conributing
 Please feel free to contribute. Highly recommend Claude! Chat with Neil if you have questions.
@@ -64,6 +65,12 @@ pic-from-video --video_path ./video.mp4 --time 5.0 --output frame.jpg
 video-to-gif --video_path ./video.mp4 --fps 15 --start_t 2.0 --end_t 5.0 --output animation.gif
 ```
 
+### Generate a QR Code
+
+```bash
+qr-code --url "https://dynamicmobility.github.io/" --logo lab_icon.svg --logo_style integrate --logo_ratio 0.4 --logo_color "#eaaa00" --output link.png
+```
+
 ## Dependencies
 
 | Package | Version |
@@ -73,6 +80,8 @@ video-to-gif --video_path ./video.mp4 --fps 15 --start_t 2.0 --end_t 5.0 --outpu
 | numpy | >= 1.20.0 |
 | tqdm | >= 4.0.0 |
 | Pillow | >= 8.0.0 |
+| qrcode | >= 7.0.0 |
+| cairosvg *(optional, for SVG logos)* | >= 2.5.0 |
 
 ---
 

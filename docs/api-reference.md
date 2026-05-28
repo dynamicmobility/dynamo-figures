@@ -1,7 +1,7 @@
 ---
 layout: default
 title: API Reference
-nav_order: 5
+nav_order: 6
 description: "Complete API reference for Dynamo Figures Python package."
 ---
 
@@ -19,6 +19,7 @@ Complete reference for the Dynamo Figures Python API.
 - [CompositeImage](#class-compositeimage)
 - [FrameExtractor](#class-frameextractor)
 - [VideoToGif](#class-videotogif)
+- [QRCode](#class-qrcode)
 
 ---
 
@@ -369,4 +370,100 @@ converter = VideoToGif(
 )
 
 converter.convert("boomerang.gif")
+```
+
+---
+
+## Module: `dynamo_figures.qr_code`
+
+### Class: `QRCode`
+
+Class for generating QR codes from a URL (or any text), with optional logo
+embedding and recoloring.
+
+#### Constructor
+
+```python
+QRCode(
+    data: str,
+    box_size: int = 10,
+    border: int = 4,
+    error_correction: str = 'H',
+    fill_color: str = 'black',
+    back_color: str = 'white',
+    logo_path: str = None,
+    logo_ratio: float = 0.22,
+    logo_padding: float = 0.0,
+    logo_bg: str = 'white',
+    logo_style: str = 'badge',
+    logo_halo: float = 0.04,
+    logo_color: str = None
+)
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|:----------|:-----|:--------|:------------|
+| `data` | `str` | Required | The URL (or text) to encode |
+| `box_size` | `int` | `10` | Pixels per QR module |
+| `border` | `int` | `4` | Quiet-zone width in modules (min 4) |
+| `error_correction` | `str` | `'H'` | `'L'`, `'M'`, `'Q'`, or `'H'` (forced to `'H'` with a logo) |
+| `fill_color` | `str` | `'black'` | Color of the QR modules |
+| `back_color` | `str` | `'white'` | Background color |
+| `logo_path` | `str` | `None` | Path to a logo (SVG or raster) to center |
+| `logo_ratio` | `float` | `0.22` | Logo width as a fraction of the QR width |
+| `logo_padding` | `float` | `0.0` | *(badge)* Badge padding, fraction of logo size |
+| `logo_bg` | `str` | `'white'` | *(badge)* Badge color, or `None` for no badge |
+| `logo_style` | `str` | `'badge'` | `'badge'` or `'integrate'` |
+| `logo_halo` | `float` | `0.04` | *(integrate)* Halo width, fraction of logo size |
+| `logo_color` | `str` | `None` | Recolor logo to a solid color, e.g. `'#eaaa00'` |
+
+#### Methods
+
+##### `make_image()`
+
+Build the QR code (with the logo, if configured) as a Pillow image.
+
+```python
+img = qr.make_image()
+```
+
+**Returns:** `PIL.Image.Image` - The QR code image (RGBA)
+
+---
+
+##### `save(output_path)`
+
+Generate the QR code and save it to a file. The format is chosen by the file
+extension; JPEG output is flattened onto `back_color`.
+
+```python
+path = qr.save("link.png")
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+| `output_path` | `str` | Path to save the image |
+
+**Returns:** `str` - The output path
+
+---
+
+### Generate a QR Code with a Logo
+
+```python
+from dynamo_figures import QRCode
+
+qr = QRCode(
+    data="https://dynamicmobility.github.io/",
+    logo_path="lab_icon.svg",
+    logo_style="integrate",
+    logo_ratio=0.4,
+    logo_color="#eaaa00",
+)
+
+qr.save("link.png")
 ```
