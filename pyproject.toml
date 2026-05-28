@@ -13,6 +13,7 @@ dependencies = [
     "numpy>=1.20.0",
     "tqdm>=4.0.0",
     "Pillow>=8.0.0",
+    "qrcode>=7.0.0",
 ]
 authors = [
   { name = "Dynamic Mobility Lab", email = "njanwani@gatech.edu" }
@@ -21,8 +22,12 @@ authors = [
 composite-image = "dynamo_figures.composite_image:main"
 pic-from-video = "dynamo_figures.pic_from_video:main"
 video-to-gif = "dynamo_figures.video_to_gif:main"
+qr-code = "dynamo_figures.qr_code:main"
 
 [project.optional-dependencies]
+svg = [
+    "cairosvg>=2.5.0",
+]
 dev = [
     "pytest>=7.0.0",
     "black>=22.0.0",
