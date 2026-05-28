@@ -5,7 +5,9 @@ baseurl: "/dynamo_figures"
 url: "https://dynamicmobility.github.io"
 
 # Theme settings
-remote_theme: just-the-docs/just-the-docs
+# Use the gem-based theme (declared in the Gemfile) via `theme:`. `remote_theme`
+# would require the jekyll-remote-theme plugin, which is not enabled here.
+theme: just-the-docs
 color_scheme: dark
 
 # Enable search
