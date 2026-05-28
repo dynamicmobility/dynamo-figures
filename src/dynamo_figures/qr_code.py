@@ -25,7 +25,7 @@ from qrcode.constants import (
     ERROR_CORRECT_Q,
     ERROR_CORRECT_H,
 )
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 
 # Map human-friendly names to qrcode error-correction constants. Higher levels
@@ -38,7 +38,7 @@ ERROR_CORRECTION = {
 }
 
 
-def load_logo(logo_path, size):
+def load_logo(logo_path, size, color=None):
     """
     Load a logo and return it as a square RGBA Pillow image of (size, size).
 
@@ -46,6 +46,9 @@ def load_logo(logo_path, size):
     required when an SVG logo is actually used). Raster logos (PNG/JPG/...) are
     opened directly. The logo is scaled to fit inside a (size, size) box while
     preserving aspect ratio, then centered on a transparent canvas.
+
+    If `color` is given (any Pillow color string, e.g. '#eaaa00'), the logo is
+    recolored to that solid color while keeping its original shape (alpha).
     """
     logo_path = Path(logo_path)
 
@@ -73,6 +76,14 @@ def load_logo(logo_path, size):
     canvas = Image.new('RGBA', (size, size), (0, 0, 0, 0))
     offset = ((size - logo.width) // 2, (size - logo.height) // 2)
     canvas.paste(logo, offset, logo)
+
+    # Recolor: keep the alpha (shape), replace RGB with the requested color.
+    if color is not None:
+        alpha = canvas.split()[-1]
+        tinted = Image.new('RGBA', canvas.size, color)
+        tinted.putalpha(alpha)
+        canvas = tinted
+
     return canvas
 
 
@@ -82,7 +93,8 @@ class QRCode:
     def __init__(self, data, box_size=10, border=4, error_correction='H',
                  fill_color='black', back_color='white',
                  logo_path=None, logo_ratio=0.22, logo_padding=0.0,
-                 logo_bg='white'):
+                 logo_bg='white', logo_style='badge', logo_halo=0.04,
+                 logo_color=None):
         """
         Initialize QRCode.
 
@@ -102,7 +114,21 @@ class QRCode:
                 logo size, drawn as a solid badge of `logo_bg` behind the logo
                 (default: 0.0).
             logo_bg: Background color of the badge drawn behind the logo, or
-                None for no badge (default: 'white').
+                None for no badge (default: 'white'). Used by 'badge' style.
+            logo_style: How the logo is composited (default: 'badge'):
+                'badge'     -- logo on a solid rounded square (blanks a square
+                               region; safest, but lots of white space for
+                               line-art logos).
+                'integrate' -- carve out only the modules under the logo's
+                               strokes (plus a halo), then draw the logo. Uses
+                               far less of the error-correction budget for thin
+                               line-art logos, so the logo can be larger.
+            logo_halo: For 'integrate' style, width of the cleared halo around
+                the logo strokes, as a fraction of the logo size (default:
+                0.04). Larger = more contrast but more modules removed.
+            logo_color: Optional Pillow color string (e.g. '#eaaa00') to recolor
+                the logo to a solid color, keeping its shape (default: None,
+                i.e. the logo's original colors).
         """
         self.data = data
         self.box_size = box_size
@@ -114,6 +140,14 @@ class QRCode:
         self.logo_ratio = logo_ratio
         self.logo_padding = logo_padding
         self.logo_bg = logo_bg
+        self.logo_style = logo_style
+        self.logo_halo = logo_halo
+        self.logo_color = logo_color
+
+        if self.logo_style not in ('badge', 'integrate'):
+            raise ValueError(
+                f"logo_style must be 'badge' or 'integrate', got {logo_style!r}"
+            )
 
         if self.error_correction not in ERROR_CORRECTION:
             raise ValueError(
@@ -126,13 +160,17 @@ class QRCode:
             print(" -- Note: forcing error_correction='H' for logo embedding.")
             self.error_correction = 'H'
 
-        # Level 'H' can recover ~30% of the code, but a logo wider than ~0.3 of
-        # the QR width tends to occlude too much center data to scan reliably.
-        if self.logo_path is not None and self.logo_ratio > 0.3:
+        # Level 'H' can recover ~30% of the code. The 'badge' style blanks a
+        # solid square, so its safe ratio is small; the 'integrate' style only
+        # removes modules under the logo's strokes, so it tolerates larger logos.
+        warn_above = 0.3 if self.logo_style == 'badge' else 0.6
+        if self.logo_path is not None and self.logo_ratio > warn_above:
+            rec = '<= 0.25' if self.logo_style == 'badge' else '<= 0.5'
             print(
-                f" -- Warning: logo_ratio={self.logo_ratio} is large and may "
-                "make the QR code unscannable. Recommended: <= 0.25 "
-                "(test the output with a real scanner before printing)."
+                f" -- Warning: logo_ratio={self.logo_ratio} is large for "
+                f"logo_style='{self.logo_style}' and may make the QR code "
+                f"unscannable. Recommended: {rec} (test the output with a real "
+                "scanner before printing)."
             )
 
     def make_image(self):
@@ -155,10 +193,48 @@ class QRCode:
         return img
 
     def _embed_logo(self, qr_img):
+        """Dispatch to the configured logo style."""
+        if self.logo_style == 'integrate':
+            return self._embed_logo_integrate(qr_img)
+        return self._embed_logo_badge(qr_img)
+
+    def _embed_logo_integrate(self, qr_img):
+        """
+        Carve out only the modules under the logo's strokes, then draw the logo.
+
+        For thin line-art logos this removes far fewer modules than a solid
+        badge, leaving most of the QR intact while letting the logo span a much
+        larger area. A small halo of background color is cleared around the
+        strokes so the logo stays distinct from the surrounding modules.
+        """
+        qr_w, qr_h = qr_img.size
+        logo_size = int(qr_w * self.logo_ratio)
+        logo = load_logo(self.logo_path, logo_size, color=self.logo_color)
+
+        # Place the logo on a full-size transparent layer so coordinates align
+        # with the QR image.
+        pos = ((qr_w - logo_size) // 2, (qr_h - logo_size) // 2)
+        logo_layer = Image.new('RGBA', (qr_w, qr_h), (0, 0, 0, 0))
+        logo_layer.paste(logo, pos, logo)
+
+        # Binary mask of the logo's ink, then dilate it to form the halo.
+        alpha = logo_layer.split()[-1]
+        mask = alpha.point(lambda a: 255 if a > 16 else 0)
+        halo_px = max(1, int(logo_size * self.logo_halo))
+        kernel = halo_px * 2 + 1
+        halo_mask = mask.filter(ImageFilter.MaxFilter(kernel))
+
+        # Clear the halo region to the background color, then draw the logo.
+        bg = Image.new('RGBA', (qr_w, qr_h), self.back_color)
+        qr_img.paste(bg, (0, 0), halo_mask)
+        qr_img.paste(logo_layer, (0, 0), logo_layer)
+        return qr_img
+
+    def _embed_logo_badge(self, qr_img):
         """Paste the logo (with optional badge) centered onto the QR image."""
         qr_w, qr_h = qr_img.size
         logo_size = int(qr_w * self.logo_ratio)
-        logo = load_logo(self.logo_path, logo_size)
+        logo = load_logo(self.logo_path, logo_size, color=self.logo_color)
 
         # Draw a solid badge behind the logo so a dark logo stays distinct from
         # dark QR modules. The badge is a rounded square slightly larger than
@@ -225,6 +301,15 @@ def main():
                         help='badge padding around the logo, as a fraction of logo size (default: 0.0).')
     parser.add_argument('--logo_bg', type=str, default='white',
                         help="badge color behind the logo, or 'none' for no badge (default: white).")
+    parser.add_argument('--logo_style', default='badge', choices=['badge', 'integrate'],
+                        help="'badge' (solid square behind logo) or 'integrate' "
+                             "(carve only around logo strokes) (default: badge).")
+    parser.add_argument('--logo_halo', type=float, default=0.04,
+                        help="for 'integrate', cleared halo width around strokes "
+                             "as a fraction of logo size (default: 0.04).")
+    parser.add_argument('--logo_color', type=str, default=None,
+                        help="recolor the logo to a solid color, e.g. '#eaaa00' "
+                             "(default: keep original colors).")
 
     args = parser.parse_args()
 
@@ -250,6 +335,9 @@ def main():
         logo_ratio=args.logo_ratio,
         logo_padding=args.logo_padding,
         logo_bg=logo_bg,
+        logo_style=args.logo_style,
+        logo_halo=args.logo_halo,
+        logo_color=args.logo_color,
     )
 
     output_path = Path(args.output)
