@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dynamo-figures"
-version = "0.3.0"
+version = "0.3.1"
 description = "A Python package for dynamic figure generation"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -23,7 +23,7 @@ composite-image = "dynamo_figures.composite_image:main"
 pic-from-video = "dynamo_figures.pic_from_video:main"
 video-to-gif = "dynamo_figures.video_to_gif:main"
 qr-code = "dynamo_figures.qr_code:main"
-blur-faces = "dynamo_figures.blur_faces:main"
+blur-faces = "dynamo_figures.blur_faces.cli:main"
 
 [project.optional-dependencies]
 gpu = [
@@ -40,7 +40,7 @@ dev = [
 ]
 
 [tool.setuptools.package-data]
-dynamo_figures = ["models/*.onnx"]
+dynamo_figures = ["blur_faces/models/*.onnx"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

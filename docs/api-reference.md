@@ -492,6 +492,7 @@ FaceBlur(
     pixel_blocks: int = 10,
     fill_color: str = 'black',
     hold_frames: int = 5,
+    smoothing: float = 0.5,
     draw_boxes: bool = False,
     disable_pbar: bool = False,
     device: str = 'auto',
@@ -514,6 +515,7 @@ FaceBlur(
 | `pixel_blocks` | `int` | `10` | *(pixelate)* Blocks across each face |
 | `fill_color` | `str` | `'black'` | *(fill)* Color name or hex code |
 | `hold_frames` | `int` | `5` | *(video)* Frames to keep a lost face obscured |
+| `smoothing` | `float` | `0.5` | *(video)* Box smoothing between frames, 0–1 (`0` = off) |
 | `draw_boxes` | `bool` | `False` | Draw boxes and scores instead of obscuring |
 | `disable_pbar` | `bool` | `False` | Disable the video progress bar |
 | `device` | `str` | `'auto'` | `'gpu'` (ONNX Runtime with CUDA/CoreML), `'cpu'` (OpenCV), or `'auto'` |
