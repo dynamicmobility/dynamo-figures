@@ -25,6 +25,7 @@ Dynamo Figures provides helpful, easy-to-run tools for video processing:
 - **Frame Extraction**: Extract single frames from videos at specific times or frame numbers
 - **Video to GIF**: Convert videos to animated GIFs with frame rate and size control
 - **QR Code**: Generate permanent QR codes from links, with optional logo embedding and recoloring
+- **Blur Faces**: Anonymize faces in photos and videos by blurring, pixelating, or covering them (runs fully locally)
 
 ### Conributing
 Please feel free to contribute. Highly recommend Claude! Chat with Neil if you have questions.

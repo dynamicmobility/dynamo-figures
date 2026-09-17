@@ -1,7 +1,7 @@
 ---
 layout: default
 title: API Reference
-nav_order: 6
+nav_order: 7
 description: "Complete API reference for Dynamo Figures Python package."
 ---
 
@@ -20,6 +20,7 @@ Complete reference for the Dynamo Figures Python API.
 - [FrameExtractor](#class-frameextractor)
 - [VideoToGif](#class-videotogif)
 - [QRCode](#class-qrcode)
+- [FaceBlur](#class-faceblur)
 
 ---
 
@@ -467,3 +468,102 @@ qr = QRCode(
 
 qr.save("link.png")
 ```
+
+---
+
+## Module: `dynamo_figures.blur_faces`
+
+### Class: `FaceBlur`
+
+Class for detecting faces with the bundled YuNet model and obscuring them in
+images and videos. Runs fully locally.
+
+#### Constructor
+
+```python
+FaceBlur(
+    style: str = 'blur',
+    shape: str = 'ellipse',
+    padding: float = 0.25,
+    score_threshold: float = 0.6,
+    nms_threshold: float = 0.3,
+    detect_max_dim: int = 2048,
+    blur_strength: float = 0.5,
+    pixel_blocks: int = 10,
+    fill_color: str = 'black',
+    hold_frames: int = 5,
+    draw_boxes: bool = False,
+    disable_pbar: bool = False,
+    device: str = 'auto',
+    batch_size: int = 8,
+    workers: int = None
+)
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|:----------|:-----|:--------|:------------|
+| `style` | `str` | `'blur'` | `'blur'`, `'pixelate'`, or `'fill'` |
+| `shape` | `str` | `'ellipse'` | `'ellipse'` or `'rect'` |
+| `padding` | `float` | `0.25` | Fraction to enlarge each face box on every side |
+| `score_threshold` | `float` | `0.6` | Minimum detection confidence (0–1) |
+| `nms_threshold` | `float` | `0.3` | Non-maximum suppression IoU threshold |
+| `detect_max_dim` | `int` | `2048` | Longest side, in pixels, used for detection (`0` = full resolution) |
+| `blur_strength` | `float` | `0.5` | *(blur)* Kernel size as a fraction of face size |
+| `pixel_blocks` | `int` | `10` | *(pixelate)* Blocks across each face |
+| `fill_color` | `str` | `'black'` | *(fill)* Color name or hex code |
+| `hold_frames` | `int` | `5` | *(video)* Frames to keep a lost face obscured |
+| `draw_boxes` | `bool` | `False` | Draw boxes and scores instead of obscuring |
+| `disable_pbar` | `bool` | `False` | Disable the video progress bar |
+| `device` | `str` | `'auto'` | `'gpu'` (ONNX Runtime with CUDA/CoreML), `'cpu'` (OpenCV), or `'auto'` |
+| `batch_size` | `int` | `8` | *(video)* Frames detected per batch |
+| `workers` | `int` | `None` | *(video)* CPU threads; defaults to the number of cores |
+
+**Attributes:**
+
+- `device_name` (`str`): the detection backend in use, e.g. `'ONNX Runtime (CoreML)'`
+
+#### Methods
+
+##### `detect(image)`
+
+Detect faces in a BGR image.
+
+**Returns:** `list` - `(x, y, w, h, score)` tuples in image coordinates
+
+---
+
+##### `detect_batch(images)`
+
+Detect faces in a list of same-sized BGR images. On the GPU, the images are
+run through the model as one batch.
+
+**Returns:** `list` - One list of `(x, y, w, h, score)` tuples per image
+
+---
+
+##### `apply(image, faces, inplace=False)`
+
+Return `image` with the given faces obscured (or annotated, if
+`draw_boxes=True`). The image is copied first unless `inplace=True`.
+
+**Returns:** `numpy.ndarray` - The processed image
+
+---
+
+##### `process_image(input_path, output_path)`
+
+Obscure faces in an image file and save the result.
+
+**Returns:** `bool` - True if successful
+
+---
+
+##### `process_video(input_path, output_path, keep_audio=True, crf=18)`
+
+Obscure faces in every frame of a video. When `ffmpeg` is available, the output
+is encoded as H.264 with quality `crf`, and the original audio is kept if
+`keep_audio` is set.
+
+**Returns:** `bool` - True if successful
