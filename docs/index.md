@@ -38,6 +38,12 @@ Please feel free to contribute. Highly recommend Claude! Chat with Neil if you h
 pip install git+ssh://git@github.com/dynamicmobility/dynamo_figures.git
 ```
 
+With GPU acceleration (note the quotes):
+
+```bash
+pip install "dynamo-figures[gpu] @ git+ssh://git@github.com/dynamicmobility/dynamo_figures.git"
+```
+
 ### Install from Local Directory
 
 ```bash
@@ -45,6 +51,18 @@ git clone git@github.com:dynamicmobility/dynamo_figures.git
 cd dynamo_figures
 pip install -e .
 ```
+
+With GPU acceleration:
+
+```bash
+pip install -e ".[gpu]"
+```
+
+{: .note }
+> The `[gpu]` extra is optional. It installs [ONNX Runtime](https://onnxruntime.ai/)
+> so that [Blur Faces](blur-faces#gpu-acceleration) can run face detection on the
+> GPU (CoreML on Apple Silicon, CUDA on NVIDIA). Everything still works without
+> it; detection just runs on the CPU.
 
 ## Quick Start
 
