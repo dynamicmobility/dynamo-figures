@@ -114,6 +114,8 @@ blur-faces --input <path> [options]
 | `--workers` | # cores | *(video)* CPU threads for detection and blurring |
 | `--smoothing` | `0.5` | *(video)* Box smoothing between frames, 0–1 (`0` = off). Higher values are steadier but lag behind fast motion |
 | `--hold_frames` | `5` | *(video)* Frames to keep obscuring a face after it is lost |
+| `--start_t` | Start | *(video)* Trim the output to start this many seconds into the input |
+| `--end_t` | End | *(video)* Trim the output to end this many seconds into the input |
 | `--no_audio` | `false` | *(video)* Drop the audio track |
 | `--crf` | `18` | *(video)* H.264 quality; lower is better |
 | `--draw_boxes` | `false` | Draw detection boxes and scores instead of obscuring |
@@ -144,6 +146,15 @@ blur-faces --input ./example/IMG_5579.jpg
 ```bash
 blur-faces --input talk.mp4 --style pixelate --shape rect --output talk_anon.mp4
 ```
+
+### Blur Only a Clip of a Video
+
+```bash
+blur-faces --input talk.mp4 --start_t 12.5 --end_t 30 --output clip_anon.mp4
+```
+
+Frames outside the range are never decoded, so trimming a short clip out of a
+long video is proportionally faster. The audio is trimmed to match.
 
 ### Cover Faces with a Solid Color
 
@@ -177,6 +188,8 @@ print(blurrer.device_name)  # e.g. "ONNX Runtime (CoreML)"
 # Whole files
 blurrer.process_image("photo.jpg", "photo_blurred.jpg")
 blurrer.process_video("video.mp4", "video_blurred.mp4", keep_audio=True)
+# Or just a slice of it, in seconds
+blurrer.process_video("video.mp4", "clip.mp4", start_t=12.5, end_t=30)
 
 # Or step by step on an array
 image = cv2.imread("photo.jpg")
