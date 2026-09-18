@@ -2,7 +2,7 @@
 dynamo_figures - A Python package for dynamic figure generation
 """
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 from dynamo_figures.composite_image import CompositeImage, CompositeMode
 from dynamo_figures.video_to_gif import VideoToGif

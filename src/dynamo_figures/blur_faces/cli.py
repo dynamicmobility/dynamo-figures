@@ -56,6 +56,12 @@ def main():
     parser.add_argument('--smoothing', type=float, default=0.5,
                         help='video only: box smoothing between frames, 0..1 (0 = off; higher is steadier '
                              'but lags; the raw detection is always covered) (default: 0.5)')
+    parser.add_argument('--start_t', type=float, default=None,
+                        help='video only: trim the output to start this many seconds into the input '
+                             '(default: start of video)')
+    parser.add_argument('--end_t', type=float, default=None,
+                        help='video only: trim the output to end this many seconds into the input '
+                             '(default: end of video)')
     parser.add_argument('--no_audio', action='store_true',
                         help='video only: drop the audio track')
     parser.add_argument('--crf', type=int, default=18,
@@ -98,6 +104,18 @@ def main():
         print("Error: --smoothing must be in [0, 1).")
         sys.exit(1)
 
+    if not is_video and (args.start_t is not None or args.end_t is not None):
+        print("Error: --start_t/--end_t only apply to videos.")
+        sys.exit(1)
+
+    if args.start_t is not None and args.start_t < 0:
+        print("Error: --start_t must be >= 0.")
+        sys.exit(1)
+
+    if args.end_t is not None and args.end_t <= (args.start_t or 0.0):
+        print("Error: --end_t must be greater than --start_t.")
+        sys.exit(1)
+
     blurrer = FaceBlur(
         style=args.style,
         shape=args.shape,
@@ -119,7 +137,8 @@ def main():
 
     if is_video:
         success = blurrer.process_video(str(input_path), output_path,
-                                        keep_audio=not args.no_audio, crf=args.crf)
+                                        keep_audio=not args.no_audio, crf=args.crf,
+                                        start_t=args.start_t, end_t=args.end_t)
     else:
         success = blurrer.process_image(str(input_path), output_path)
 

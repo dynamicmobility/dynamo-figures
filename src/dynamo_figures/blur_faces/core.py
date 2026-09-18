@@ -152,7 +152,8 @@ class FaceBlur:
         print(f" -- Output saved to: {output_path}")
         return True
 
-    def process_video(self, input_path, output_path, keep_audio=True, crf=18):
+    def process_video(self, input_path, output_path, keep_audio=True, crf=18,
+                      start_t=None, end_t=None):
         """
         Obscure faces in every frame of a video file and save the result.
 
@@ -165,40 +166,70 @@ class FaceBlur:
             output_path: Path for the output video
             keep_audio: Copy the original audio track (requires ffmpeg)
             crf: H.264 quality when encoding with ffmpeg (lower = better)
+            start_t: Trim the output to start at this many seconds in
+                     (None or 0 = from the beginning)
+            end_t: Trim the output to end at this many seconds in, exclusive
+                   (None = to the end of the video)
 
         Returns:
             bool: True if successful, False otherwise
         """
+        if start_t is not None and start_t < 0:
+            print("Error: start_t must be >= 0.")
+            return False
+        if start_t is not None and end_t is not None and end_t <= start_t:
+            print("Error: end_t must be greater than start_t.")
+            return False
+
         cap = cv2.VideoCapture(input_path)
         if not cap.isOpened():
             print(f"Error: Could not open video file '{input_path}'.")
             return False
 
-        ret, first = cap.read()
-        if not ret:
-            print(f"Error: Could not read frames from '{input_path}'.")
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+        start_frame = round((start_t or 0.0) * fps)
+        if start_frame and not cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame):
+            print(f"Error: Could not seek to {start_t:g}s in '{input_path}'.")
             cap.release()
             return False
 
-        fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        ret, first = cap.read()
+        if not ret:
+            where = f' at {start_t:g}s' if start_frame else ''
+            print(f"Error: Could not read frames from '{input_path}'{where}.")
+            cap.release()
+            return False
+
+        max_frames = None
+        if end_t is not None:
+            max_frames = max(1, round(end_t * fps) - start_frame)
         # Use the decoded frame size, which already accounts for rotation metadata
         height, width = first.shape[:2]
-        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        print(f" -- Video info: {width}x{height}, {frame_count} frames, {fps:.2f} FPS")
+        frame_count = max(0, total_frames - start_frame) or total_frames
+        if max_frames is not None and frame_count:
+            frame_count = min(frame_count, max_frames)
+        print(f" -- Video info: {width}x{height}, {total_frames} frames, {fps:.2f} FPS")
+        if start_frame or max_frames is not None:
+            end_label = f'{end_t:g}s' if end_t is not None else 'end'
+            print(f" -- Trimming to {(start_t or 0.0):g}s..{end_label} ({frame_count} frames)")
         print(f" -- Detector: {self.device_name}, batch size {self.batch_size}, {self.workers} worker(s)")
 
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         tmp_dir = tempfile.mkdtemp(prefix='blur_faces_')
         try:
             writer = open_writer(output_path, width, height, fps, crf,
-                                 audio_source=input_path if keep_audio else None, log_dir=tmp_dir)
+                                 audio_source=input_path if keep_audio else None, log_dir=tmp_dir,
+                                 audio_start=start_frame / fps if (start_frame or max_frames is not None) else None)
         except IOError as e:
             print(f"Error: {e}")
             cap.release()
             shutil.rmtree(tmp_dir, ignore_errors=True)
             return False
 
-        reader = FrameReader(cap, first, max_queue=self.batch_size * 2).start()
+        reader = FrameReader(cap, first, max_queue=self.batch_size * 2,
+                             max_frames=max_frames).start()
 
         # Many single-threaded workers beat OpenCV's own internal threading here
         prev_threads = cv2.getNumThreads()

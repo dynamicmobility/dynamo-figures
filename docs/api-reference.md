@@ -562,10 +562,14 @@ Obscure faces in an image file and save the result.
 
 ---
 
-##### `process_video(input_path, output_path, keep_audio=True, crf=18)`
+##### `process_video(input_path, output_path, keep_audio=True, crf=18, start_t=None, end_t=None)`
 
 Obscure faces in every frame of a video. When `ffmpeg` is available, the output
 is encoded as H.264 with quality `crf`, and the original audio is kept if
 `keep_audio` is set.
+
+`start_t` and `end_t` are times in seconds into the input. When either is given,
+the output is trimmed to that range (audio included), and frames outside it are
+never decoded or processed.
 
 **Returns:** `bool` - True if successful

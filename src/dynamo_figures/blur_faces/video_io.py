@@ -15,20 +15,32 @@ import cv2
 class FrameReader:
     """Decodes video frames on a background thread into a bounded queue."""
 
-    def __init__(self, cap, first_frame, max_queue):
+    def __init__(self, cap, first_frame, max_queue, max_frames=None):
+        """
+        Args:
+            cap: An open cv2.VideoCapture, positioned after first_frame
+            first_frame: The frame already read from cap
+            max_queue: Maximum number of decoded frames held in memory
+            max_frames: Stop after decoding this many frames (None = all)
+        """
         self._cap = cap
         self._first = first_frame
+        self._max_frames = max_frames
         self._queue = queue.Queue(maxsize=max_queue)
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, daemon=True)
 
     def _run(self):
         self._queue.put(self._first)
+        read = 1
         while not self._stop.is_set():
+            if self._max_frames is not None and read >= self._max_frames:
+                break
             ret, frame = self._cap.read()
             if not ret:
                 break
             self._queue.put(frame)
+            read += 1
         self._queue.put(None)
 
     def start(self):
@@ -63,7 +75,7 @@ class FFmpegWriter:
     """Streams raw BGR frames into an ffmpeg process that encodes H.264."""
 
     def __init__(self, ffmpeg, output_path, width, height, fps, crf=18,
-                 audio_source=None, log_dir=None):
+                 audio_source=None, log_dir=None, audio_start=None):
         """
         Args:
             ffmpeg: Path to the ffmpeg executable
@@ -72,11 +84,18 @@ class FFmpegWriter:
             crf: H.264 quality (lower = better)
             audio_source: Copy the audio track from this file, if it has one
             log_dir: Directory for ffmpeg's error log
+            audio_start: Seek this many seconds into the audio source before
+                         copying, and cut the audio to the video's length
         """
         cmd = [ffmpeg, '-y', '-loglevel', 'error',
                '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{width}x{height}', '-r', f'{fps}', '-i', '-']
         if audio_source:
+            if audio_start is not None:
+                cmd += ['-ss', f'{audio_start:.6f}']
             cmd += ['-i', audio_source, '-map', '0:v:0', '-map', '1:a?', '-c:a', 'copy']
+            if audio_start is not None:
+                # The piped video is already trimmed, so match the audio to it
+                cmd += ['-shortest']
         cmd += ['-vf', 'pad=ceil(iw/2)*2:ceil(ih/2)*2',  # yuv420p needs even dimensions
                 '-c:v', 'libx264', '-crf', str(crf), '-pix_fmt', 'yuv420p',
                 '-movflags', '+faststart', output_path]
@@ -118,7 +137,8 @@ class OpenCVWriter:
         return True
 
 
-def open_writer(output_path, width, height, fps, crf=18, audio_source=None, log_dir=None):
+def open_writer(output_path, width, height, fps, crf=18, audio_source=None, log_dir=None,
+                audio_start=None):
     """
     Open the best available video writer.
 
@@ -129,4 +149,5 @@ def open_writer(output_path, width, height, fps, crf=18, audio_source=None, log_
     if ffmpeg is None:
         print(" -- Warning: ffmpeg not found; output will have no audio and use the mp4v codec")
         return OpenCVWriter(output_path, width, height, fps)
-    return FFmpegWriter(ffmpeg, output_path, width, height, fps, crf, audio_source, log_dir)
+    return FFmpegWriter(ffmpeg, output_path, width, height, fps, crf, audio_source, log_dir,
+                        audio_start)
