@@ -165,7 +165,7 @@ class CompositeImage:
 def main():
     """Main function for command-line interface."""
     parser = argparse.ArgumentParser(
-        prog='composite-image',
+        prog='dynamo-composite-image',
         description='Convert video to composite image.',
         epilog='-'
     )

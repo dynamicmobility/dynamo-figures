@@ -21,7 +21,7 @@ Generate a permanent QR code from a website link, with optional logo embedding, 
 
 ## Overview
 
-The `qr-code` tool turns a URL (or any text) into a QR code image. Because the
+The `dynamo-qr-code` tool turns a URL (or any text) into a QR code image. Because the
 link is encoded **directly** into the image, the code is *permanent* — it never
 expires and keeps working as long as the website is reachable. (QR codes only
 "expire" when they point at a URL-shortener that redirects elsewhere; this tool
@@ -44,7 +44,7 @@ scan. Two embedding styles are available:
 ## Command-Line Usage
 
 ```bash
-qr-code --url <link> [options]
+dynamo-qr-code --url <link> [options]
 ```
 
 ### Required Arguments
@@ -85,7 +85,7 @@ qr-code --url <link> [options]
 Encode a link with default settings (black on white, no logo):
 
 ```bash
-qr-code --url "https://dynamicmobility.github.io/" --output link.png
+dynamo-qr-code --url "https://dynamicmobility.github.io/" --output link.png
 ```
 
 ### Embed a Logo (badge style)
@@ -93,7 +93,7 @@ qr-code --url "https://dynamicmobility.github.io/" --output link.png
 Place a logo on a white rounded badge in the center:
 
 ```bash
-qr-code --url "https://dynamicmobility.github.io/" \
+dynamo-qr-code --url "https://dynamicmobility.github.io/" \
     --logo lab_icon.svg --logo_ratio 0.25 --logo_padding 0.12 \
     --output link.png
 ```
@@ -104,7 +104,7 @@ Weave the logo into the code so the modules show through around it. This
 tolerates a larger logo than the badge style:
 
 ```bash
-qr-code --url "https://dynamicmobility.github.io/" \
+dynamo-qr-code --url "https://dynamicmobility.github.io/" \
     --logo lab_icon.svg --logo_style integrate --logo_ratio 0.4 \
     --output link.png
 ```
@@ -114,7 +114,7 @@ qr-code --url "https://dynamicmobility.github.io/" \
 Tint the logo to the lab's gold accent while keeping its shape:
 
 ```bash
-qr-code --url "https://dynamicmobility.github.io/" \
+dynamo-qr-code --url "https://dynamicmobility.github.io/" \
     --logo lab_icon.svg --logo_style integrate --logo_ratio 0.4 \
     --logo_color "#eaaa00" --output link.png
 ```
@@ -125,7 +125,7 @@ Make the modules light grey and keep the logo black. `--fill_color` controls the
 QR modules and is independent of `--logo_color`:
 
 ```bash
-qr-code --url "https://dynamicmobility.github.io/" \
+dynamo-qr-code --url "https://dynamicmobility.github.io/" \
     --logo lab_icon.svg --logo_style integrate --logo_ratio 0.4 \
     --fill_color "#999999" --logo_color black --output link.png
 ```
@@ -200,7 +200,7 @@ QRCode(
 
 ## Dependencies
 
-The `qr-code` tool requires `qrcode` (and `Pillow`, already a core dependency):
+The `dynamo-qr-code` tool requires `qrcode` (and `Pillow`, already a core dependency):
 
 ```bash
 pip install qrcode

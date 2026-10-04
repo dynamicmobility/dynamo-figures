@@ -14,19 +14,19 @@ Extract single frames from video files and save them as images.
 ---
 
 ![Frame Extraction Example](assets/frame_extraction_example.jpg)
-*Example frame extracted from a video file using pic-from-video*
+*Example frame extracted from a video file using dynamo-pic-from-video*
 {: .text-center }
 
 ---
 
 ## Overview
 
-The `pic-from-video` tool extracts a single frame from a video file and saves it as an image. You can specify the exact frame number, a time in seconds, or let it default to the middle frame.
+The `dynamo-pic-from-video` tool extracts a single frame from a video file and saves it as an image. You can specify the exact frame number, a time in seconds, or let it default to the middle frame.
 
 ## Command-Line Usage
 
 ```bash
-pic-from-video --video_path <path> [options]
+dynamo-pic-from-video --video_path <path> [options]
 ```
 
 ### Required Arguments
@@ -56,7 +56,7 @@ pic-from-video --video_path <path> [options]
 When no frame or time is specified, the middle frame is extracted:
 
 ```bash
-pic-from-video --video_path input.mp4 --output frame.jpg
+dynamo-pic-from-video --video_path input.mp4 --output frame.jpg
 ```
 
 ### Extract Frame at Specific Time
@@ -64,7 +64,7 @@ pic-from-video --video_path input.mp4 --output frame.jpg
 Extract a frame at 5.5 seconds into the video:
 
 ```bash
-pic-from-video --video_path input.mp4 --time 5.5 --output frame.jpg
+dynamo-pic-from-video --video_path input.mp4 --time 5.5 --output frame.jpg
 ```
 
 ### Extract Specific Frame Number
@@ -72,7 +72,7 @@ pic-from-video --video_path input.mp4 --time 5.5 --output frame.jpg
 Extract frame number 100 (0-indexed):
 
 ```bash
-pic-from-video --video_path input.mp4 --frame 100 --output frame.png
+dynamo-pic-from-video --video_path input.mp4 --frame 100 --output frame.png
 ```
 
 ### Get Video Information Only
@@ -80,7 +80,7 @@ pic-from-video --video_path input.mp4 --frame 100 --output frame.png
 Display video properties without extracting a frame:
 
 ```bash
-pic-from-video --video_path input.mp4 --info_only
+dynamo-pic-from-video --video_path input.mp4 --info_only
 ```
 
 **Output:**

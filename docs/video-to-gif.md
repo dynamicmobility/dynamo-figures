@@ -14,14 +14,14 @@ Convert video files to animated GIFs with full control over timing, frame rate, 
 ---
 
 ![Video to GIF Example](assets/video_to_gif_example.gif)
-*Example GIF created from a video file using video-to-gif*
+*Example GIF created from a video file using dynamo-video-to-gif*
 {: .text-center }
 
 ---
 
 ## Overview
 
-The `video-to-gif` tool converts video files to animated GIFs. It supports time range selection, frame rate control, resizing, and optional effects like boomerang (reverse) looping.
+The `dynamo-video-to-gif` tool converts video files to animated GIFs. It supports time range selection, frame rate control, resizing, and optional effects like boomerang (reverse) looping.
 
 [Command-Line Usage](#command-line-usage){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 [Python API](#python-api){: .btn .fs-5 .mb-4 .mb-md-0 }
@@ -29,7 +29,7 @@ The `video-to-gif` tool converts video files to animated GIFs. It supports time 
 ## Command-Line Usage
 
 ```bash
-video-to-gif --video_path <path> [options]
+dynamo-video-to-gif --video_path <path> [options]
 ```
 
 ### Required Arguments
@@ -68,7 +68,7 @@ video-to-gif --video_path <path> [options]
 Create a high-quality, cropped, sped-up GIF from a specific time range:
 
 ```bash
-video-to-gif --video_path ./example/video.mp4 \
+dynamo-video-to-gif --video_path ./example/video.mp4 \
     --start_t 1.5 --end_t 4.0 \
     --fps 15 --width 480 \
     --crop_top 50 --crop_bottom 50 --speed 1.5 \
@@ -80,7 +80,7 @@ video-to-gif --video_path ./example/video.mp4 \
 Convert an entire video to GIF with default settings:
 
 ```bash
-video-to-gif --video_path input.mp4
+dynamo-video-to-gif --video_path input.mp4
 ```
 
 ### Extract a Time Range
@@ -88,7 +88,7 @@ video-to-gif --video_path input.mp4
 Create a GIF from seconds 2 to 5 of the video:
 
 ```bash
-video-to-gif --video_path input.mp4 --start_t 2.0 --end_t 5.0
+dynamo-video-to-gif --video_path input.mp4 --start_t 2.0 --end_t 5.0
 ```
 
 ### Control Frame Rate
@@ -96,13 +96,13 @@ video-to-gif --video_path input.mp4 --start_t 2.0 --end_t 5.0
 Create a smoother GIF with higher frame rate:
 
 ```bash
-video-to-gif --video_path input.mp4 --fps 15
+dynamo-video-to-gif --video_path input.mp4 --fps 15
 ```
 
 Create a smaller file with lower frame rate:
 
 ```bash
-video-to-gif --video_path input.mp4 --fps 5
+dynamo-video-to-gif --video_path input.mp4 --fps 5
 ```
 
 ### Resize Output
@@ -110,13 +110,13 @@ video-to-gif --video_path input.mp4 --fps 5
 Scale down to 50% of original size:
 
 ```bash
-video-to-gif --video_path input.mp4 --scale 0.5
+dynamo-video-to-gif --video_path input.mp4 --scale 0.5
 ```
 
 Set a specific width (height auto-calculated):
 
 ```bash
-video-to-gif --video_path input.mp4 --width 320
+dynamo-video-to-gif --video_path input.mp4 --width 320
 ```
 
 ### Crop Output
@@ -124,19 +124,19 @@ video-to-gif --video_path input.mp4 --width 320
 Crop pixels from specific edges (applied after scaling):
 
 ```bash
-video-to-gif --video_path input.mp4 --crop_left 100 --crop_right 100
+dynamo-video-to-gif --video_path input.mp4 --crop_left 100 --crop_right 100
 ```
 
 Crop from all edges:
 
 ```bash
-video-to-gif --video_path input.mp4 --crop_top 50 --crop_bottom 50 --crop_left 100 --crop_right 100
+dynamo-video-to-gif --video_path input.mp4 --crop_top 50 --crop_bottom 50 --crop_left 100 --crop_right 100
 ```
 
 Combine with scaling (crop is applied after scale):
 
 ```bash
-video-to-gif --video_path input.mp4 --width 800 --crop_top 50 --crop_bottom 50
+dynamo-video-to-gif --video_path input.mp4 --width 800 --crop_top 50 --crop_bottom 50
 ```
 
 ### Change Playback Speed
@@ -144,13 +144,13 @@ video-to-gif --video_path input.mp4 --width 800 --crop_top 50 --crop_bottom 50
 Speed up the GIF to 2x:
 
 ```bash
-video-to-gif --video_path input.mp4 --speed 2.0
+dynamo-video-to-gif --video_path input.mp4 --speed 2.0
 ```
 
 Slow down to half speed:
 
 ```bash
-video-to-gif --video_path input.mp4 --speed 0.5
+dynamo-video-to-gif --video_path input.mp4 --speed 0.5
 ```
 
 ### Boomerang Effect
@@ -158,7 +158,7 @@ video-to-gif --video_path input.mp4 --speed 0.5
 Create a GIF that plays forward then backward:
 
 ```bash
-video-to-gif --video_path input.mp4 --reverse
+dynamo-video-to-gif --video_path input.mp4 --reverse
 ```
 
 ### Get Video Information Only
@@ -166,7 +166,7 @@ video-to-gif --video_path input.mp4 --reverse
 Display video properties without converting:
 
 ```bash
-video-to-gif --video_path input.mp4 --info_only
+dynamo-video-to-gif --video_path input.mp4 --info_only
 ```
 
 **Output:**
@@ -272,7 +272,7 @@ GIF files can get large quickly. Here are some tips to reduce file size:
 Reduce FPS to the minimum acceptable level:
 
 ```bash
-video-to-gif --video_path input.mp4 --fps 8
+dynamo-video-to-gif --video_path input.mp4 --fps 8
 ```
 
 ### 2. Resize the Output
@@ -280,9 +280,9 @@ video-to-gif --video_path input.mp4 --fps 8
 Scale down the resolution:
 
 ```bash
-video-to-gif --video_path input.mp4 --scale 0.5
+dynamo-video-to-gif --video_path input.mp4 --scale 0.5
 # or
-video-to-gif --video_path input.mp4 --width 320
+dynamo-video-to-gif --video_path input.mp4 --width 320
 ```
 
 ### 3. Shorter Duration
@@ -290,7 +290,7 @@ video-to-gif --video_path input.mp4 --width 320
 Extract only the most important part:
 
 ```bash
-video-to-gif --video_path input.mp4 --start_t 1.0 --end_t 3.0
+dynamo-video-to-gif --video_path input.mp4 --start_t 1.0 --end_t 3.0
 ```
 
 ### 4. Keep Optimization Enabled
@@ -301,7 +301,7 @@ Don't use `--no_optimize` unless necessary.
 
 ## Dependencies
 
-The `video-to-gif` tool requires Pillow for GIF creation:
+The `dynamo-video-to-gif` tool requires Pillow for GIF creation:
 
 ```bash
 pip install Pillow

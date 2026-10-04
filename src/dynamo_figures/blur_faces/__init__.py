@@ -8,7 +8,7 @@
         tracking   Frame-to-frame box smoothing and hold for videos
         obscure    Blur / pixelate / fill rendering
         video_io   Threaded frame reading and ffmpeg encoding
-        cli        The blur-faces command-line tool
+        cli        The dynamo-blur-faces command-line tool
 """
 
 from dynamo_figures.blur_faces.core import FaceBlur

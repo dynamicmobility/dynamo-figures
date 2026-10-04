@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Blur Faces
-nav_order: 6
+nav_order: 7
 description: "Anonymize faces in photos and videos by blurring, pixelating, or covering them. Runs fully locally."
 ---
 
@@ -14,14 +14,14 @@ Anonymize faces in a photo or video by blurring, pixelating, or covering them.
 ---
 
 ![Blur Faces Example](assets/blur_faces_example.jpg)
-*Before and after `blur-faces` with the default settings*
+*Before and after `dynamo-blur-faces` with the default settings*
 {: .text-center }
 
 ---
 
 ## Overview
 
-The `blur-faces` tool finds every face in an image or video and obscures it.
+The `dynamo-blur-faces` tool finds every face in an image or video and obscures it.
 Faces are detected with OpenCV's [YuNet](https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet)
 model, which ships with this package, so **nothing is uploaded or downloaded**:
 everything runs on your machine.
@@ -86,7 +86,7 @@ Three styles are available:
 ## Command-Line Usage
 
 ```bash
-blur-faces --input <path> [options]
+dynamo-blur-faces --input <path> [options]
 ```
 
 ### Required Arguments
@@ -138,19 +138,19 @@ blur-faces --input <path> [options]
 ### Blur Faces in a Photo
 
 ```bash
-blur-faces --input ./example/IMG_5579.jpg
+dynamo-blur-faces --input ./example/IMG_5579.jpg
 ```
 
 ### Pixelate Faces in a Video
 
 ```bash
-blur-faces --input talk.mp4 --style pixelate --shape rect --output talk_anon.mp4
+dynamo-blur-faces --input talk.mp4 --style pixelate --shape rect --output talk_anon.mp4
 ```
 
 ### Blur Only a Clip of a Video
 
 ```bash
-blur-faces --input talk.mp4 --start_t 12.5 --end_t 30 --output clip_anon.mp4
+dynamo-blur-faces --input talk.mp4 --start_t 12.5 --end_t 30 --output clip_anon.mp4
 ```
 
 Frames outside the range are never decoded, so trimming a short clip out of a
@@ -159,19 +159,19 @@ long video is proportionally faster. The audio is trimmed to match.
 ### Cover Faces with a Solid Color
 
 ```bash
-blur-faces --input photo.jpg --style fill --fill_color '#eaaa00'
+dynamo-blur-faces --input photo.jpg --style fill --fill_color '#eaaa00'
 ```
 
 ### Force the CPU
 
 ```bash
-blur-faces --input talk.mp4 --device cpu
+dynamo-blur-faces --input talk.mp4 --device cpu
 ```
 
 ### Check What the Detector Finds
 
 ```bash
-blur-faces --input crowd.jpg --draw_boxes --score_threshold 0.4 --detect_max_dim 4096
+dynamo-blur-faces --input crowd.jpg --draw_boxes --score_threshold 0.4 --detect_max_dim 4096
 ```
 
 ---
@@ -211,5 +211,5 @@ The tool lives in the `dynamo_figures.blur_faces` package:
 | `tracking.py` | `FaceTracker`: frame-to-frame smoothing and hold |
 | `obscure.py` | Blur, pixelate, and fill rendering |
 | `video_io.py` | Threaded frame reading and ffmpeg encoding |
-| `cli.py` | The `blur-faces` command (also `python -m dynamo_figures.blur_faces`) |
+| `cli.py` | The `dynamo-blur-faces` command (also `python -m dynamo_figures.blur_faces`) |
 | `models/` | The bundled YuNet ONNX model |

@@ -22,13 +22,13 @@ pip install -e .
 
 ### Command-Line Interface
 
-After installation, you can use the `composite-image` command:
+After installation, you can use the `dynamo-composite-image` command:
 
 #### 1. VAR Mode (Recommended)
 Uses pixels that are furthest from the mean of the image, creating dynamic composite effects.
 
 ```bash
-composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode VAR --alpha 0.4 --output ./example/composite.png
+dynamo-composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode VAR --alpha 0.4 --output ./example/composite.png
 ```
 ![image-20230909002327059](./example/image-20230909002327059.png)
 
@@ -36,7 +36,7 @@ composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --sk
 Keeps the darkest pixels from all frames.
 
 ```bash
-composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MIN --output ./example/composite.png
+dynamo-composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MIN --output ./example/composite.png
 ```
 ![image-20230909002235029](./example/image-20230909002235029.png)
 
@@ -44,7 +44,7 @@ composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --sk
 Keeps the lightest pixels from all frames.
 
 ```bash
-composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MAX --output ./example/composite.png
+dynamo-composite-image --video_path ./example/video.mp4 --start_t 0.0 --end_t 99.0 --skip_frame 2 --mode MAX --output ./example/composite.png
 ```
 ![image-20230909002149494](./example/image-20230909002149494.png)
 

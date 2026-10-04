@@ -1,7 +1,7 @@
 ---
 layout: default
 title: API Reference
-nav_order: 7
+nav_order: 8
 description: "Complete API reference for Dynamo Figures Python package."
 ---
 
@@ -21,6 +21,7 @@ Complete reference for the Dynamo Figures Python API.
 - [VideoToGif](#class-videotogif)
 - [QRCode](#class-qrcode)
 - [FaceBlur](#class-faceblur)
+- [TexToImage](#class-textoimage)
 
 ---
 
@@ -573,3 +574,83 @@ the output is trimmed to that range (audio included), and frames outside it are
 never decoded or processed.
 
 **Returns:** `bool` - True if successful
+
+---
+
+## Module: `dynamo_figures.tex2img`
+
+### Class: `TexToImage`
+
+Class for compiling a `.tex` file and converting it to an SVG or PNG image,
+using only the tools that ship with any working LaTeX installation.
+
+#### Constructor
+
+```python
+TexToImage(
+    tex_path: str = None,
+    tex_source: str = None,
+    engine: str = 'pdflatex',
+    crop: bool = True,
+    margin: float = 10,
+    timeout: float = 60
+)
+```
+
+Give exactly one of `tex_path` or `tex_source`.
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|:----------|:-----|:--------|:------------|
+| `tex_path` | `str` | `None` | Path to the input `.tex` file |
+| `tex_source` | `str` | `None` | Raw LaTeX source as a string, instead of `tex_path`. Compiled as-is -- use `wrap_document()`, or the `from_string()`/`from_math()` classmethods, to wrap bare content |
+| `engine` | `str` | `'pdflatex'` | `'pdflatex'`, `'xelatex'`, or `'lualatex'` |
+| `crop` | `bool` | `True` | Crop PNG output to content via `pdfcrop` (SVG always trims to content) |
+| `margin` | `float` | `10` | Padding (big points) kept around content when cropping PNG output |
+| `timeout` | `float` | `60` | Seconds allowed per subprocess step |
+
+#### Class Methods
+
+##### `TexToImage.from_string(body, **kwargs)`
+
+Build a `TexToImage` from LaTeX body content, wrapped in a minimal standalone
+document (unless `body` already defines `\documentclass`).
+
+##### `TexToImage.from_math(expr, **kwargs)`
+
+Build a `TexToImage` from a bare math expression, wrapped in `$...$`.
+
+#### Methods
+
+##### `convert(output_path, dpi=300, transparent=True, fmt=None, keep_aux=False, workdir=None)`
+
+Compile and convert to an image, saving to `output_path`. The format is
+chosen by the file extension unless `fmt` is given.
+
+```python
+converter.convert("equation.svg")
+converter.convert("equation.png", dpi=600)
+```
+
+**Returns:** `Path` - `output_path`
+
+---
+
+### Render a TeX Equation
+
+```python
+from dynamo_figures import TexToImage
+
+converter = TexToImage("equation.tex", engine="pdflatex")
+converter.convert("equation.svg")
+converter.convert("equation.png", dpi=600)
+```
+
+### Render a Math Expression Without a .tex File
+
+```python
+from dynamo_figures import TexToImage
+
+TexToImage.from_math("E = mc^2").convert("equation.png", dpi=600)
+```

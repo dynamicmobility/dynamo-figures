@@ -19,11 +19,12 @@ authors = [
   { name = "Dynamic Mobility Lab", email = "njanwani@gatech.edu" }
 ]
 [project.scripts]
-composite-image = "dynamo_figures.composite_image:main"
-pic-from-video = "dynamo_figures.pic_from_video:main"
-video-to-gif = "dynamo_figures.video_to_gif:main"
-qr-code = "dynamo_figures.qr_code:main"
-blur-faces = "dynamo_figures.blur_faces.cli:main"
+dynamo-composite-image = "dynamo_figures.composite_image:main"
+dynamo-pic-from-video = "dynamo_figures.pic_from_video:main"
+dynamo-video-to-gif = "dynamo_figures.video_to_gif:main"
+dynamo-qr-code = "dynamo_figures.qr_code:main"
+dynamo-blur-faces = "dynamo_figures.blur_faces.cli:main"
+dynamo-tex2img = "dynamo_figures.tex2img:main"
 
 [project.optional-dependencies]
 gpu = [

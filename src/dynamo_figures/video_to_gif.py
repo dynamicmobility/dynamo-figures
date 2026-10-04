@@ -342,7 +342,7 @@ class VideoToGif:
 def main():
     """Main function for command-line interface."""
     parser = argparse.ArgumentParser(
-        prog='video-to-gif',
+        prog='dynamo-video-to-gif',
         description='Convert a video file to an animated GIF.',
         epilog='-'
     )

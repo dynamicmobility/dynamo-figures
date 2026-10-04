@@ -1,6 +1,6 @@
 """
     File: cli.py
-    Description: Command-line interface for the blur-faces tool.
+    Description: Command-line interface for the dynamo-blur-faces tool.
     Blurs, pixelates, or covers faces in a photo or video, fully locally.
 """
 
@@ -17,7 +17,7 @@ VIDEO_EXTENSIONS = {'.mp4', '.mov', '.avi', '.mkv', '.m4v', '.webm', '.wmv'}
 def main():
     """Main function for command-line interface."""
     parser = argparse.ArgumentParser(
-        prog='blur-faces',
+        prog='dynamo-blur-faces',
         description='Blur, pixelate, or cover faces in a photo or video. Runs fully locally.',
         epilog='-'
     )

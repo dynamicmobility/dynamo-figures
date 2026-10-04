@@ -150,7 +150,7 @@ class FrameExtractor:
 def main():
     """Main function for command-line interface."""
     parser = argparse.ArgumentParser(
-        prog='pic-from-video',
+        prog='dynamo-pic-from-video',
         description='Extract a frame from a video file and save it as an image.',
         epilog='-'
     )

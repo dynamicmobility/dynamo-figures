@@ -26,6 +26,7 @@ Dynamo Figures provides helpful, easy-to-run tools for video processing:
 - **Video to GIF**: Convert videos to animated GIFs with frame rate and size control
 - **QR Code**: Generate permanent QR codes from links, with optional logo embedding and recoloring
 - **Blur Faces**: Anonymize faces in photos and videos by blurring, pixelating, or covering them (runs fully locally)
+- **Tex2Img**: Convert a `.tex` file into an SVG or PNG image, cropped to its content
 
 ### Conributing
 Please feel free to contribute. Highly recommend Claude! Chat with Neil if you have questions.
@@ -69,25 +70,32 @@ pip install -e ".[gpu]"
 ### Create a Composite Image
 
 ```bash
-composite-image --video_path ./video.mp4 --mode VAR --alpha 0.4 --output composite.png
+dynamo-composite-image --video_path ./video.mp4 --mode VAR --alpha 0.4 --output composite.png
 ```
 
 ### Extract a Frame from Video
 
 ```bash
-pic-from-video --video_path ./video.mp4 --time 5.0 --output frame.jpg
+dynamo-pic-from-video --video_path ./video.mp4 --time 5.0 --output frame.jpg
 ```
 
 ### Convert Video to GIF
 
 ```bash
-video-to-gif --video_path ./video.mp4 --fps 15 --start_t 2.0 --end_t 5.0 --output animation.gif
+dynamo-video-to-gif --video_path ./video.mp4 --fps 15 --start_t 2.0 --end_t 5.0 --output animation.gif
 ```
 
 ### Generate a QR Code
 
 ```bash
-qr-code --url "https://dynamicmobility.github.io/" --logo lab_icon.svg --logo_style integrate --logo_ratio 0.4 --logo_color "#eaaa00" --output link.png
+dynamo-qr-code --url "https://dynamicmobility.github.io/" --logo lab_icon.svg --logo_style integrate --logo_ratio 0.4 --logo_color "#eaaa00" --output link.png
+```
+
+### Convert a TeX File (or a Math Expression) to an Image
+
+```bash
+dynamo-tex2img --input equation.tex --output equation.svg
+dynamo-tex2img --math "E = mc^2" --output equation.png
 ```
 
 ## Dependencies

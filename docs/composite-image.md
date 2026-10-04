@@ -21,12 +21,12 @@ Create stunning composite images by merging video frames using various compositi
 
 ## Overview
 
-The `composite-image` tool extracts frames from a video and merges them using different composition modes to create dynamic visual effects. This is useful for creating motion trails, long-exposure effects, and artistic visualizations.
+The `dynamo-composite-image` tool extracts frames from a video and merges them using different composition modes to create dynamic visual effects. This is useful for creating motion trails, long-exposure effects, and artistic visualizations.
 
 ## Command-Line Usage
 
 ```bash
-composite-image --video_path <path> [options]
+dynamo-composite-image --video_path <path> [options]
 ```
 
 ### Required Arguments
@@ -57,7 +57,7 @@ composite-image --video_path <path> [options]
 Uses pixels that are furthest from the mean of all frames, creating dynamic composite effects with maximum variation.
 
 ```bash
-composite-image --video_path ./example/video.mp4 \
+dynamo-composite-image --video_path ./example/video.mp4 \
     --start_t 0.0 --end_t 99.0 \
     --skip_frame 2 --mode VAR \
     --alpha 0.4 --output ./composite.png
@@ -73,7 +73,7 @@ composite-image --video_path ./example/video.mp4 \
 Keeps the darkest pixels from all frames, creating a "minimum exposure" effect.
 
 ```bash
-composite-image --video_path ./example/video.mp4 \
+dynamo-composite-image --video_path ./example/video.mp4 \
     --start_t 0.0 --end_t 99.0 \
     --skip_frame 2 --mode MIN \
     --output ./composite.png
@@ -89,7 +89,7 @@ composite-image --video_path ./example/video.mp4 \
 Keeps the lightest pixels from all frames, creating a "maximum exposure" effect.
 
 ```bash
-composite-image --video_path ./example/video.mp4 \
+dynamo-composite-image --video_path ./example/video.mp4 \
     --start_t 0.0 --end_t 99.0 \
     --skip_frame 2 --mode MAX \
     --output ./composite.png
@@ -161,23 +161,23 @@ CompositeImage(
 ### Process Only First 10 Seconds
 
 ```bash
-composite-image --video_path input.mp4 --end_t 10.0 --mode VAR
+dynamo-composite-image --video_path input.mp4 --end_t 10.0 --mode VAR
 ```
 
 ### Skip Every Other Frame for Faster Processing
 
 ```bash
-composite-image --video_path input.mp4 --skip_frame 2 --mode VAR
+dynamo-composite-image --video_path input.mp4 --skip_frame 2 --mode VAR
 ```
 
 ### Create High-Contrast Composite
 
 ```bash
-composite-image --video_path input.mp4 --alpha 1.0 --mode VAR
+dynamo-composite-image --video_path input.mp4 --alpha 1.0 --mode VAR
 ```
 
 ### Subtle Blending Effect
 
 ```bash
-composite-image --video_path input.mp4 --alpha 0.2 --mode VAR
+dynamo-composite-image --video_path input.mp4 --alpha 0.2 --mode VAR
 ```

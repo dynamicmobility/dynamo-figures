@@ -274,7 +274,7 @@ class QRCode:
 def main():
     """Main function for command-line interface."""
     parser = argparse.ArgumentParser(
-        prog='qr-code',
+        prog='dynamo-qr-code',
         description='Generate a permanent QR code from a website link, '
                     'optionally with a centered logo.',
         epilog='-'
