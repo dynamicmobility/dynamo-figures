@@ -64,7 +64,7 @@ pip install -e ".[gpu]"
 
 ## License
 
-All Rights Reserved 2023
+This software is licensed by the MIT license agreement.
 
 ## Credits
 
