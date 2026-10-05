@@ -22,16 +22,16 @@ Please feel free to contribute, or request new tools by [making an issue on our 
 
 ## Installation
 
-### Install from Git
+### Install from PyPI
 
 ```bash
-pip install git+ssh://git@github.com/dynamicmobility/dynamo-figures.git
+pip install dynamo-figures
 ```
 
 With GPU acceleration (note the quotes), which can speed up the blurring faces tool:
 
 ```bash
-pip install "dynamo-figures[gpu] @ git+ssh://git@github.com/dynamicmobility/dynamo-figures.git"
+pip install "dynamo-figures[gpu]"
 ```
 
 ### Install from Local Directory

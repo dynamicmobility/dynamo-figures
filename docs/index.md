@@ -27,21 +27,21 @@ Dynamo Figures provides helpful, easy-to-run tools for image and video processin
 - [**Blur Faces**](blur-faces): Anonymize faces in photos and videos by blurring, pixelating, or covering them (runs fully locally)
 - [**Tex2Img**](tex2img): Convert a `.tex` file into an SVG or PNG image, cropped to its content
 
-### Conributing
+### Contributing
 Please feel free to contribute, or request new tools by [making an issue on our Github](https://github.com/dynamicmobility/dynamo-figures/issues).
 
 ## Installation
 
-### Install from Git
+### Install from PyPI
 
 ```bash
-pip install git+ssh://git@github.com/dynamicmobility/dynamo-figures.git
+pip install dynamo-figures
 ```
 
 With GPU acceleration (note the quotes), which can speed up the blurring faces tool:
 
 ```bash
-pip install "dynamo-figures[gpu] @ git+ssh://git@github.com/dynamicmobility/dynamo-figures.git"
+pip install "dynamo-figures[gpu]"
 ```
 
 ### Install from Local Directory
