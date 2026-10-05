@@ -9,7 +9,7 @@ permalink: /
 # Dynamo Figures
 {: .fs-9 }
 
-An internal Python package for creating figures for publications.
+A package for creating figures for publications.
 {: .fs-6 .fw-300 }
 
 [Get Started](#installation){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
@@ -19,17 +19,16 @@ An internal Python package for creating figures for publications.
 
 ## Overview
 
-Dynamo Figures provides helpful, easy-to-run tools for video processing:
+Dynamo Figures provides helpful, easy-to-run tools for image and video processing. Use the search bar above or the side-panel on the left to find tools you're looking for. A few common ones are listed below:
 
-- **Composite Image**: Create cool visual effects by merging video frames using various composition modes
-- **Frame Extraction**: Extract single frames from videos at specific times or frame numbers
-- **Video to GIF**: Convert videos to animated GIFs with frame rate and size control
-- **QR Code**: Generate permanent QR codes from links, with optional logo embedding and recoloring
-- **Blur Faces**: Anonymize faces in photos and videos by blurring, pixelating, or covering them (runs fully locally)
-- **Tex2Img**: Convert a `.tex` file into an SVG or PNG image, cropped to its content
+- [**Composite Image**](composite-image): Create cool visual effects by merging video frames using various composition modes
+- [**Video to GIF**](video-to-gif): Convert videos to animated GIFs with frame rate and size control
+- [**QR Code**](qr-code): Generate permanent QR codes from links, with optional logo embedding and recoloring
+- [**Blur Faces**](blur-faces): Anonymize faces in photos and videos by blurring, pixelating, or covering them (runs fully locally)
+- [**Tex2Img**](tex2img): Convert a `.tex` file into an SVG or PNG image, cropped to its content
 
 ### Conributing
-Please feel free to contribute. Highly recommend Claude! Chat with Neil if you have questions.
+Please feel free to contribute, or request new tools by [making an issue on our Github](https://github.com/dynamicmobility/dynamo_figures/issues).
 
 ## Installation
 
@@ -39,7 +38,7 @@ Please feel free to contribute. Highly recommend Claude! Chat with Neil if you h
 pip install git+ssh://git@github.com/dynamicmobility/dynamo_figures.git
 ```
 
-With GPU acceleration (note the quotes):
+With GPU acceleration (note the quotes), which can speed up the blurring faces tool:
 
 ```bash
 pip install "dynamo-figures[gpu] @ git+ssh://git@github.com/dynamicmobility/dynamo_figures.git"
@@ -57,45 +56,6 @@ With GPU acceleration:
 
 ```bash
 pip install -e ".[gpu]"
-```
-
-{: .note }
-> The `[gpu]` extra is optional. It installs [ONNX Runtime](https://onnxruntime.ai/)
-> so that [Blur Faces](blur-faces#gpu-acceleration) can run face detection on the
-> GPU (CoreML on Apple Silicon, CUDA on NVIDIA). Everything still works without
-> it; detection just runs on the CPU.
-
-## Quick Start
-
-### Create a Composite Image
-
-```bash
-dynamo-composite-image --video_path ./video.mp4 --mode VAR --alpha 0.4 --output composite.png
-```
-
-### Extract a Frame from Video
-
-```bash
-dynamo-pic-from-video --video_path ./video.mp4 --time 5.0 --output frame.jpg
-```
-
-### Convert Video to GIF
-
-```bash
-dynamo-video-to-gif --video_path ./video.mp4 --fps 15 --start_t 2.0 --end_t 5.0 --output animation.gif
-```
-
-### Generate a QR Code
-
-```bash
-dynamo-qr-code --url "https://dynamicmobility.github.io/" --logo lab_icon.svg --logo_style integrate --logo_ratio 0.4 --logo_color "#eaaa00" --output link.png
-```
-
-### Convert a TeX File (or a Math Expression) to an Image
-
-```bash
-dynamo-tex2img --input equation.tex --output equation.svg
-dynamo-tex2img --math "E = mc^2" --output equation.png
 ```
 
 ## Dependencies
@@ -118,5 +78,5 @@ All Rights Reserved 2023
 
 ## Credits
 
-Composite Video Generation: renyunfan (renyf@connect.hku.hk)
-Claude!
+Composite Video Generation inspired by renyunfan (renyf@connect.hku.hk)
+This codebase was built with help from AI coding agents.
