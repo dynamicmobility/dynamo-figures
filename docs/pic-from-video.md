@@ -69,7 +69,7 @@ dynamo-pic-from-video --video_path input.mp4 --time 5.5 --output frame.jpg
 
 ### Extract Specific Frame Number
 
-Extract frame number 100 (0-indexed):
+Extract frame number 100 (frames are 0-indexed):
 
 ```bash
 dynamo-pic-from-video --video_path input.mp4 --frame 100 --output frame.png
