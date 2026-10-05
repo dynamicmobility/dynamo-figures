@@ -4,8 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dynamo-figures"
-version = "0.3.2"
-description = "A Python package for dynamic figure generation"
+version = "0.3.4"
+authors = [
+  { name="Dynamic Mobility Lab at Georgia Tech" },
+  { name="Neil Janwani", email="njanwani@gatech.edu" },
+]
+description = "A Python package for figure generation"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
@@ -14,9 +18,6 @@ dependencies = [
     "tqdm>=4.0.0",
     "Pillow>=8.0.0",
     "qrcode>=7.0.0",
-]
-authors = [
-  { name = "Dynamic Mobility Lab", email = "njanwani@gatech.edu" }
 ]
 [project.scripts]
 dynamo-composite-image = "dynamo_figures.composite_image:main"

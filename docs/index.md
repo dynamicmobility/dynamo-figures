@@ -13,7 +13,7 @@ A package for creating figures for publications.
 {: .fs-6 .fw-300 }
 
 [Get Started](#installation){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[View on GitHub](https://github.com/dynamicmobility/dynamo_figures){: .btn .fs-5 .mb-4 .mb-md-0 }
+[View on GitHub](https://github.com/dynamicmobility/dynamo-figures){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
@@ -28,27 +28,27 @@ Dynamo Figures provides helpful, easy-to-run tools for image and video processin
 - [**Tex2Img**](tex2img): Convert a `.tex` file into an SVG or PNG image, cropped to its content
 
 ### Conributing
-Please feel free to contribute, or request new tools by [making an issue on our Github](https://github.com/dynamicmobility/dynamo_figures/issues).
+Please feel free to contribute, or request new tools by [making an issue on our Github](https://github.com/dynamicmobility/dynamo-figures/issues).
 
 ## Installation
 
 ### Install from Git
 
 ```bash
-pip install git+ssh://git@github.com/dynamicmobility/dynamo_figures.git
+pip install git+ssh://git@github.com/dynamicmobility/dynamo-figures.git
 ```
 
 With GPU acceleration (note the quotes), which can speed up the blurring faces tool:
 
 ```bash
-pip install "dynamo-figures[gpu] @ git+ssh://git@github.com/dynamicmobility/dynamo_figures.git"
+pip install "dynamo-figures[gpu] @ git+ssh://git@github.com/dynamicmobility/dynamo-figures.git"
 ```
 
 ### Install from Local Directory
 
 ```bash
-git clone git@github.com:dynamicmobility/dynamo_figures.git
-cd dynamo_figures
+git clone git@github.com:dynamicmobility/dynamo-figures.git
+cd dynamo-figures
 pip install -e .
 ```
 

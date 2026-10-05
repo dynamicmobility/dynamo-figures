@@ -1,7 +1,7 @@
 # Site settings
 title: Dynamo Figures
 description: A Python package for creating composite images, extracting frames, and converting videos to GIFs.
-baseurl: "/dynamo_figures"
+baseurl: "/dynamo-figures"
 url: "https://dynamicmobility.github.io"
 
 # Theme settings
@@ -24,7 +24,7 @@ search:
 # Aux links (top right)
 aux_links:
   "GitHub":
-    - "https://github.com/dynamicmobility/dynamo_figures"
+    - "https://github.com/dynamicmobility/dynamo-figures"
 
 aux_links_new_tab: true
 
@@ -44,7 +44,7 @@ heading_anchors: true
 # External navigation links
 nav_external_links:
   - title: GitHub
-    url: https://github.com/dynamicmobility/dynamo_figures
+    url: https://github.com/dynamicmobility/dynamo-figures
 
 # Callouts
 callouts_level: quiet
