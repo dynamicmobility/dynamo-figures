@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dynamo-figures"
-version = "0.3.5"
+version = "0.3.6"
 authors = [
   { name="Dynamic Mobility Lab at Georgia Tech" },
   { name="Neil Janwani", email="njanwani@gatech.edu" },
+  { name="Varun Madabushi", email="vmadabushi@gatech.edu" },
 ]
 description = "A Python package for figure generation"
 readme = "README.md"
