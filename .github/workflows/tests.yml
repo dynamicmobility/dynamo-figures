@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    env:
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install system packages (ffmpeg, LaTeX toolchain, cairo, OpenCV libs)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ffmpeg ghostscript libcairo2 libgl1 libglib2.0-0 \
+            texlive-latex-base texlive-latex-extra texlive-extra-utils \
+            texlive-binaries texlive-xetex texlive-luatex
+
+      - name: Install package
+        run: python -m pip install -e ".[dev,svg]"
+
+      - name: Show toolchain
+        run: |
+          python --version
+          ffmpeg -version | head -1
+          for tool in pdflatex latex pdfcrop dvisvgm gs; do which "$tool"; done
+
+      - name: Run tests
+        run: >
+          python -m pytest
+          --cov=dynamo_figures --cov-report=term-missing --cov-report=xml
+          --junitxml=junit.xml
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-py${{ matrix.python-version }}
+          path: |
+            coverage.xml
+            junit.xml
