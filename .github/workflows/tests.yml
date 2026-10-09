@@ -36,7 +36,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            ffmpeg ghostscript libcairo2 libgl1 libglib2.0-0 \
+            ffmpeg ghostscript dvisvgm libcairo2 libgl1 libglib2.0-0 \
             texlive-latex-base texlive-latex-extra texlive-extra-utils \
             texlive-binaries texlive-xetex texlive-luatex
 
